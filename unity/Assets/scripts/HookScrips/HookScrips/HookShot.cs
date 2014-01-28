@@ -108,8 +108,8 @@ public class HookShot : MonoBehaviour {
 			{
 				leftDifference = leftHookLocation - this.transform.position;
 				//Formula for gravity;
-				BallMotor.instance.ApplyGravityLeft(leftHookLocation,100f);
-				BallMotor.instance.ApplySpringForceLeft(leftHookLocation, 100f, springAtRest, springStrength);
+				GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMotor>().ApplyGravityLeft(leftHookLocation,100f);
+				GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMotor>().ApplySpringForceLeft(leftHookLocation, 100f, springAtRest, springStrength);
 				//gravityForceLeft = leftDifference.normalized*gravity*mass*leftHook.GetComponent<Hook>().mass/(leftDifference.magnitude*leftDifference.magnitude);
 				//springForceLeft = -springStrength*(leftDifference.magnitude - springAtRest)*(leftDifference.normalized);				
 				
@@ -177,8 +177,8 @@ public class HookShot : MonoBehaviour {
 			{
 				rightDifference =  rightHookLocation - this.transform.position;
 				//Formula for gravity;
-				BallMotor.instance.ApplyGravityRight(rightHookLocation,100f);
-				BallMotor.instance.ApplySpringForceRight(rightHookLocation, 100f, springAtRest, springStrength);
+				GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMotor>().ApplyGravityRight(rightHookLocation,100f);
+				GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMotor>().ApplySpringForceRight(rightHookLocation, 100f, springAtRest, springStrength);
 				//gravityForceRight = rightDifference.normalized*gravity*mass*rightHook.GetComponent<Hook>().mass/(rightDifference.magnitude*rightDifference.magnitude);
 				//springForceRight = -springStrength*(rightDifference.magnitude - springAtRest)*(rightDifference.normalized);								
 			}
