@@ -72,7 +72,6 @@ public class FollowMousePos : MonoBehaviour {
 		}
 		if(Mathf.Abs(difference)>rotationSpeed/(180/Mathf.PI)*Time.deltaTime)
 		{
-			Debug.Log("N "+difference/(Mathf.PI/180));
 			if(difference > 0)
 			{
 
@@ -83,7 +82,7 @@ public class FollowMousePos : MonoBehaviour {
 			}
 		}else
 		{
-			Debug.Log("difference"+difference/(Mathf.PI/180));
+			//Debug.Log("difference"+difference/(Mathf.PI/180));
 			this.transform.Rotate(new Vector3(0,1,0),-difference/(Mathf.PI/180));
 		}
 

@@ -33,7 +33,9 @@ public class ProjectileLauncher : MonoBehaviour {
 			if(Input.GetMouseButton(0))
 			{
 				scale+=ChargeRate*Time.deltaTime;
-				//if(scale<1)chargingSpell.GetComponent<Projectile>().SetScale(scale);
+
+				//if(scale<1&&chargingSpell != null)
+				//	chargingSpell.GetComponent<Projectile>().SetScale(scale);
 				Debug.Log(scale);
 			}
 
@@ -42,8 +44,11 @@ public class ProjectileLauncher : MonoBehaviour {
 				MouseJustPressed = false;
  				chargingSpell.transform.parent = null;
 				chargingSpell.AddComponent<Rigidbody>();
-				if(scale<1)chargingSpell.GetComponent<Projectile>().SetScale(scale);
-				if(scale>1)scale=1;
+				chargingSpell.GetComponent<SphereCollider>().enabled = true;
+				//if(scale<=1)chargingSpell.GetComponent<Projectile>().SetScale(scale);
+				Debug.Log(scale);
+				//if(scale>1)scale=1;
+				chargingSpell.rigidbody.useGravity=false;
 				chargingSpell.rigidbody.AddForce(transform.parent.parent.GetComponent<Rigidbody>().velocity+this.transform.forward*((3000f*scale)+300));
 				scale = 0.1f;
 				reloadTime = 0;

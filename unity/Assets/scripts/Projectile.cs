@@ -17,9 +17,9 @@ public class Projectile : MonoBehaviour {
 	}
 	public void SetScale(float scale)
 	{
-		GetComponentInChildren<ParticleSystem>().startSize = particleStartSize * scale;
+		//GetComponentInChildren<ParticleSystem>().startSize = particleStartSize * scale;
 		transform.localScale = localScaleStart * scale;
-		GetComponentInChildren<Light>().range = lightRange * scale + (lightRange*0.5f);
+		//GetComponentInChildren<Light>().range = lightRange * scale + (lightRange*0.5f);
 		GetComponentInChildren<TrailRenderer>().startWidth = startWidth * scale;
 	}
 	// Update is called once per frame
@@ -30,7 +30,7 @@ public class Projectile : MonoBehaviour {
 	{
 		GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
 
-		Destroy(gameObject,2);
+		Destroy(gameObject);
 		this.transform.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
 	}	
 }
