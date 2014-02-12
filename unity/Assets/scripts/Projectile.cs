@@ -24,12 +24,15 @@ public class Projectile : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-		
+		if(rigidbody!=null)
+		{
+			this.transform.LookAt(rigidbody.velocity+this.transform.position);
+		}
 	}
 	void OnCollisionEnter(Collision hit)
 	{
 		GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
-
+		if(gameObject.name == "ShadowBallDeath") death.GetComponent<ExpandingExplosion>().expanding = true;
 		Destroy(gameObject);
 		this.transform.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
 	}	

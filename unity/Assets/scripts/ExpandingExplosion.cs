@@ -4,9 +4,9 @@ using System.Collections;
 public class ExpandingExplosion : MonoBehaviour {
 
 	// Use this for initialization
-	public float maxScale = 15;
-	public float growthRate = 1;
-	bool expanding;
+	public float maxScale = 60;
+	public float growthRate = 60;
+	public bool expanding;
 	bool shrinking;
 	public float fallSpeed=5;
 	void Start () {
@@ -35,7 +35,7 @@ public class ExpandingExplosion : MonoBehaviour {
 				growthRate *=-1;
 				shrinking = true;
 			}
-			//Debug.Log(scale);
+			Debug.Log(scale);
 			if(scale.y<0.1)Destroy(gameObject);
 
 

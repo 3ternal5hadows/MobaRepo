@@ -25,7 +25,7 @@ public class ProjectileLauncher : MonoBehaviour {
 
 			if(Input.GetMouseButtonDown(0))
 			{
-				chargingSpell = Instantiate(projectile, this.transform.position, Quaternion.identity) as GameObject;
+				chargingSpell = Instantiate(projectile, this.transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
 				chargingSpell.transform.parent = this.transform;
 				MouseJustPressed = true;
 
@@ -47,8 +47,9 @@ public class ProjectileLauncher : MonoBehaviour {
 				chargingSpell.GetComponent<SphereCollider>().enabled = true;
 				//if(scale<=1)chargingSpell.GetComponent<Projectile>().SetScale(scale);
 				Debug.Log(scale);
-				//if(scale>1)scale=1;
+				if(scale>1)scale=1;
 				chargingSpell.rigidbody.useGravity=false;
+				chargingSpell.rigidbody.velocity = this.transform.parent.parent.rigidbody.velocity;
 				chargingSpell.rigidbody.AddForce(transform.parent.parent.GetComponent<Rigidbody>().velocity+this.transform.forward*((3000f*scale)+300));
 				scale = 0.1f;
 				reloadTime = 0;
