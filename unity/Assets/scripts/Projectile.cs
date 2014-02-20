@@ -32,8 +32,11 @@ public class Projectile : MonoBehaviour {
 	void OnCollisionEnter(Collision hit)
 	{
 		GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
-		if(gameObject.name == "ShadowBallDeath") death.GetComponent<ExpandingExplosion>().expanding = true;
-		Destroy(gameObject);
+		if(gameObject.name == "ShadowBallDeath(Clone)") death.GetComponent<ExpandingExplosion>().expanding = true;
+		Destroy(GetComponent<SphereCollider>());
+
+		GetComponent<MeshFilter>().sharedMesh = null;
+		Destroy(gameObject,1);
 		this.transform.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
 	}	
 }

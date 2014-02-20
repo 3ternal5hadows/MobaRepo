@@ -23,5 +23,6 @@ public class DissolveLOS : MonoBehaviour {
 				Debug.DrawLine(this.transform.position, player.transform.position, Color.yellow);
 			}
 		}else Debug.DrawLine(this.transform.position, player.transform.position, Color.blue);
+
 	}
 }

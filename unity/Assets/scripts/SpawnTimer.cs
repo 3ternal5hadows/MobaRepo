@@ -7,6 +7,7 @@ public class SpawnTimer : MonoBehaviour {
 	public GameObject spawn;
 	public float spawnTime=5;
 	float elapsedTime;
+	GameObject thing;
 	void Start () {
 		elapsedTime =0;
 	}
@@ -17,7 +18,7 @@ public class SpawnTimer : MonoBehaviour {
 		if(elapsedTime>=spawnTime)
 		{
 			elapsedTime =0;
-			Instantiate(spawn,this.transform.position, Quaternion.identity);
+			thing = Instantiate(spawn,this.transform.position, Quaternion.identity) as GameObject;
 		}
 	
 	}
