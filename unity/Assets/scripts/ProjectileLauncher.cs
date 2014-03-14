@@ -20,31 +20,72 @@ public class ProjectileLauncher : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(networkView.isMine)
+		if(DataGod.currentGameState == DataGod.GameMode.NetWorkPlay)
+		{
+			if(networkView.isMine)
+			{
+				if(reloadTime > ReloadSpeed)
+				{
+
+					if(Input.GetMouseButtonDown(0))
+					{
+						chargingSpell = Network.Instantiate(projectile, this.transform.position, Quaternion.LookRotation(transform.forward),0) as GameObject;
+						chargingSpell.transform.parent = this.transform;
+						MouseJustPressed = true;
+
+					}
+					if(Input.GetMouseButton(0))
+					{
+						scale+=ChargeRate*Time.deltaTime;
+
+						//if(scale<1&&chargingSpell != null)
+						//	chargingSpell.GetComponent<Projectile>().SetScale(scale);
+						Debug.Log(scale);
+					}
+
+					if(Input.GetMouseButtonUp(0)&&MouseJustPressed)
+					{
+						MouseJustPressed = false;
+		 				chargingSpell.transform.parent = null;
+						chargingSpell.AddComponent<Rigidbody>();
+						chargingSpell.GetComponent<SphereCollider>().enabled = true;
+						//if(scale<=1)chargingSpell.GetComponent<Projectile>().SetScale(scale);
+						Debug.Log(scale);
+						if(scale>1)scale=1;
+						chargingSpell.rigidbody.useGravity=false;
+						chargingSpell.rigidbody.velocity = this.transform.parent.parent.rigidbody.velocity;
+						chargingSpell.rigidbody.AddForce(transform.parent.parent.GetComponent<Rigidbody>().velocity+this.transform.forward*((3000f*scale)+300));
+						scale = 0.1f;
+						reloadTime = 0;
+					}
+				}
+				reloadTime += Time.deltaTime;
+			}
+		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
 		{
 			if(reloadTime > ReloadSpeed)
 			{
-
+				
 				if(Input.GetMouseButtonDown(0))
-				{
-					chargingSpell = Network.Instantiate(projectile, this.transform.position, Quaternion.LookRotation(transform.forward),0) as GameObject;
+				{	
+					chargingSpell = Instantiate(projectile, this.transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
 					chargingSpell.transform.parent = this.transform;
 					MouseJustPressed = true;
-
+					
 				}
 				if(Input.GetMouseButton(0))
 				{
 					scale+=ChargeRate*Time.deltaTime;
-
+					
 					//if(scale<1&&chargingSpell != null)
 					//	chargingSpell.GetComponent<Projectile>().SetScale(scale);
 					Debug.Log(scale);
 				}
-
+				
 				if(Input.GetMouseButtonUp(0)&&MouseJustPressed)
 				{
 					MouseJustPressed = false;
-	 				chargingSpell.transform.parent = null;
+					chargingSpell.transform.parent = null;
 					chargingSpell.AddComponent<Rigidbody>();
 					chargingSpell.GetComponent<SphereCollider>().enabled = true;
 					//if(scale<=1)chargingSpell.GetComponent<Projectile>().SetScale(scale);
@@ -58,7 +99,8 @@ public class ProjectileLauncher : MonoBehaviour {
 				}
 			}
 			reloadTime += Time.deltaTime;
-			}
+		}
+		
 	}
-
+	
 }

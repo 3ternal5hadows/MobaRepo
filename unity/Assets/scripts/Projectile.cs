@@ -32,12 +32,19 @@ public class Projectile : MonoBehaviour {
 	}
 	void OnCollisionEnter(Collision hit)
 	{
-		GameObject death = Network.Instantiate(deathEffect, this.transform.position, Quaternion.identity,0) as GameObject;
-		if(gameObject.name == "ShadowBallDeath(Clone)") death.GetComponent<ExpandingExplosion>().expanding = true;
-		Destroy(GetComponent<SphereCollider>());
-
-
-		Network.Destroy(networkView.viewID);
+		if(DataGod.currentGameState == DataGod.GameMode.NetWorkPlay)
+		{
+			GameObject death = Network.Instantiate(deathEffect, this.transform.position, Quaternion.identity,0) as GameObject;
+			if(gameObject.name == "ShadowBallDeath(Clone)") death.GetComponent<ExpandingExplosion>().expanding = true;
+			Destroy(GetComponent<SphereCollider>());
+			Network.Destroy(networkView.viewID);
+		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
+		{
+			GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
+			if(gameObject.name == "ShadowBallDeath(Clone)") death.GetComponent<ExpandingExplosion>().expanding = true;
+			Destroy(GetComponent<SphereCollider>());
+			Destroy(gameObject,1);
+		}
 
 		this.transform.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
 	}	
