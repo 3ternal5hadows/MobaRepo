@@ -35,7 +35,7 @@ public class ExpandingExplosion : MonoBehaviour {
 				growthRate *=-1;
 				shrinking = true;
 			}
-			Debug.Log(scale);
+			//Debug.Log(scale);
 			if(scale.y<0.1)Destroy(gameObject);
 
 

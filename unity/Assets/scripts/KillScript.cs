@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KillScript : MonoBehaviour {
+public class KillScript: MonoBehaviour {
 
 	// Use this for initialization
-
-	public float DeathCountDown=0;
+	public int Delay=0;
 	void Start () {
-		Destroy(this.gameObject,DeathCountDown);
+		Destroy(this.gameObject,Delay);	
 	}
 	
 	// Update is called once per frame

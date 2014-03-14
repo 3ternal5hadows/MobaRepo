@@ -6,6 +6,7 @@ public class Projectile : MonoBehaviour {
 	public GameObject deathEffect;
 	Vector3 localScaleStart;
 	float particleStartSize;
+	float timeElapsed;
 	float lightRange;
 	float startWidth;
 	void Start () {
@@ -31,12 +32,13 @@ public class Projectile : MonoBehaviour {
 	}
 	void OnCollisionEnter(Collision hit)
 	{
-		GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
+		GameObject death = Network.Instantiate(deathEffect, this.transform.position, Quaternion.identity,0) as GameObject;
 		if(gameObject.name == "ShadowBallDeath(Clone)") death.GetComponent<ExpandingExplosion>().expanding = true;
 		Destroy(GetComponent<SphereCollider>());
 
-		GetComponent<MeshFilter>().sharedMesh = null;
-		Destroy(gameObject,1);
+
+		Network.Destroy(networkView.viewID);
+
 		this.transform.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
 	}	
 }

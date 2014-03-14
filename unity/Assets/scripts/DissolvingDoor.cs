@@ -3,7 +3,7 @@ using System.Collections;
 
 public class DissolvingDoor : MonoBehaviour {
 
-	float sliceAmount;//0-1, 1 is full slice 
+	public float sliceAmount;//0-1, 1 is full slice 
 					  //	 0 is none
 	public float sliceSpeed =1;
 	bool playerOn = false;
@@ -29,7 +29,7 @@ public class DissolvingDoor : MonoBehaviour {
 		if(hit.gameObject.tag == "Player")
 		{
 			playerOn = true;
-			Debug.Log("Player On Door "+sliceAmount);
+			//Debug.Log("Player On Door "+sliceAmount);
 			sliceAmount += sliceSpeed *Time.deltaTime;
 			if(sliceAmount>1){
 				sliceAmount = 1;

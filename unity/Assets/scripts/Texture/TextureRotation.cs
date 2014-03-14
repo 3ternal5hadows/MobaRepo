@@ -14,12 +14,8 @@ public class TextureRotation : MonoBehaviour {
 	
 
 	void Update () {
-		if(renderer != null)
-		{
 		offset = new Vector2(Time.time * scrollSpeed.x,Time.time * scrollSpeed.y);
         renderer.material.SetTextureOffset("_MainTex", offset);
 		renderer.material.SetTextureOffset("_BumpMap", offset);
-		renderer.material.SetTextureOffset("_Detail", offset);
-		}
 	}
 }
