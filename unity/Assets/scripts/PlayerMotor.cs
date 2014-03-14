@@ -28,67 +28,74 @@ public class PlayerMotor : MonoBehaviour {
 	
 
 	void Start () {
-		if(!networkView.isMine)
-		{
-			Destroy(this.GetComponentInChildren<Light>());
-			Destroy(this);
-			Destroy(this.GetComponentInChildren<ProjectileLauncher>());
-			Destroy(this.GetComponentInChildren<AttackAnimation>());
-			Destroy(this.GetComponentInChildren<FollowMousePos>());
-
-		}
-		if(networkView.isMine)
-		{
-			DataGod.networkIsMine = true;
-		}
 		velocity = Vector3.zero;		
 		transform.rigidbody.freezeRotation=true;
-		
+		if(DataGod.currentGameState == DataGod.GameMode.NetWorkPlay)
+		{
+			if(!networkView.isMine)
+			{
+				Destroy(this.GetComponentInChildren<Light>());
+				Destroy(this);
+				Destroy(this.GetComponentInChildren<ProjectileLauncher>());
+				Destroy(this.GetComponentInChildren<AttackAnimation>());
+				Destroy(this.GetComponentInChildren<FollowMousePos>());
+
+			}
+			if(networkView.isMine)
+			{
+				DataGod.networkIsMine = true;
+			}
+
+		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
+		{
+		}
 	}
 	
 	
 	void FixedUpdate () {
-		if(networkView.isMine)
+		if(DataGod.currentGameState == DataGod.GameMode.NetWorkPlay)
+		{
+			if(networkView.isMine)
+			{
+				DetectInput();	
+
+				ResolvePhysics();
+			}
+		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
 		{
 			DetectInput();
-			/*if(accelerationSpringRight != Vector3.zero||accelerationGravityRight != Vector3.zero||
-				accelerationSpringLeft != Vector3.zero||accelerationGravityLeft != Vector3.zero)
-			{
-				transform.rigidbody.useGravity = false;
-			}else transform.rigidbody.useGravity = true;*/
-			
-			netAcceleration = accelerationSpringLeft + accelerationSpringRight + accelerationGravityLeft + accelerationGravityRight + accelerationMovement;
-
-			velocity = netAcceleration * Time.deltaTime;
-			if(velocity.magnitude > maxSpeed)
-			{
-				velocity = velocity.normalized * maxSpeed;
-			}
-			
-			//velocity -= -velocity.normalized * frictionForce;		
-	        displacement = velocity * Time.deltaTime + 0.5f * netAcceleration * Time.deltaTime * Time.deltaTime;
-			transform.rigidbody.AddForce(velocity * Time.deltaTime + 0.5f * netAcceleration * Time.deltaTime * Time.deltaTime,ForceMode.VelocityChange);
-
-			//transform.Translate(netAcceleration);
-			accelerationGravityLeft = Vector3.zero;
-			accelerationSpringLeft = Vector3.zero;
-			accelerationGravityRight = Vector3.zero;
-			accelerationSpringRight = Vector3.zero;
-			accelerationMovement = Vector3.zero;
+			ResolvePhysics();
+		}
+	}
+	void ResolvePhysics()
+	{
+		netAcceleration = accelerationSpringLeft + accelerationSpringRight + accelerationGravityLeft + accelerationGravityRight + accelerationMovement;
+		
+		velocity = netAcceleration * Time.deltaTime;
+		if(velocity.magnitude > maxSpeed)
+		{
+			velocity = velocity.normalized * maxSpeed;
 		}
 		
+		//velocity -= -velocity.normalized * frictionForce;		
+		displacement = velocity * Time.deltaTime + 0.5f * netAcceleration * Time.deltaTime * Time.deltaTime;
+		transform.rigidbody.AddForce(velocity * Time.deltaTime + 0.5f * netAcceleration * Time.deltaTime * Time.deltaTime,ForceMode.VelocityChange);
+		
+		//transform.Translate(netAcceleration);
+		accelerationGravityLeft = Vector3.zero;
+		accelerationSpringLeft = Vector3.zero;
+		accelerationGravityRight = Vector3.zero;
+		accelerationSpringRight = Vector3.zero;
+		accelerationMovement = Vector3.zero;		
 	}
 	void DetectInput()
 	{
-		
-		
 		if(Input.GetKey(KeyCode.W))//forwards
 		{		
 			accelerationMovement.z =1f;
 		}		
 		else if(Input.GetKey(KeyCode.S))//down
 		{
-
 			accelerationMovement.z += -1f;
 		}
 		else 

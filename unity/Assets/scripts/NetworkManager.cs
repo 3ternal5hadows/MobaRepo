@@ -7,6 +7,7 @@ public class NetworkManager : MonoBehaviour {
     private HostData[] hostList;
 
     public GameObject player;
+	public GameObject DemoPlayer;
 	GameObject[] SpawnPoint;
 
     private Timer hostRefreshTimer;
@@ -56,17 +57,25 @@ public class NetworkManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		SpawnPoint = GameObject.FindGameObjectsWithTag("SpawnPoint");
-        if (DataGod.isClient) {
-            //Client initialization here
-            connected = false;
-            hostRefreshTimer = new Timer(1);
-            connectionTimeoutTimer = new Timer(100);
-            RefreshHostList();
-        } else {
-            //Server initialization here
-            StartServer();
-        }
-		Network.sendRate = 500;
+		if(DataGod.currentGameState == DataGod.GameMode.NetWorkPlay)
+		{
+	        if (DataGod.isClient) {
+	            //Client initialization here
+	            connected = false;
+	            hostRefreshTimer = new Timer(1);
+	            connectionTimeoutTimer = new Timer(100);
+	            RefreshHostList();
+	        } else {
+	            //Server initialization here
+	            StartServer();
+	        }
+			Network.sendRate = 500;
+		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
+		{
+			GameObject demoPlayer = Instantiate(DemoPlayer, new Vector3(0,10,0), Quaternion.identity) as GameObject;
+			Camera.main.GetComponent<CameraFollowMouse>().Player = demoPlayer;
+
+		}
 	}
 	
 	// Update is called once per frame
@@ -91,6 +100,11 @@ public class NetworkManager : MonoBehaviour {
                 }
             }
         }
+		if(DataGod.currentGameState == DataGod.GameMode.Demo)
+		{
+
+		}
+
 	}
 
     private void LookForServer() {
