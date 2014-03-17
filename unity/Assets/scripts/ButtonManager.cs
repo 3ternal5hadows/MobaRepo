@@ -4,46 +4,76 @@ using System.Collections;
 public class ButtonManager : MonoBehaviour {
 
 	// Use this for initialization
+	float elapsedTime=0;
 	void Start () {
 		DataGod.currentGameState = DataGod.GameMode.Menu;
 
 	}
+	public float DelayTime = 20;
+	bool loadingDemo = false;
+	bool loadingTalents = false;
+	bool loadingGame = false;
 	
 	// Update is called once per frame
 	void Update () {
+		if(loadingTalents)
+		{
+			elapsedTime += Time.deltaTime;
+			if(elapsedTime>=DelayTime)
+			{
+				Application.LoadLevel("Skill Tree");
+			}
+			
+		}
+		if(loadingGame || loadingDemo)
+		{
+			elapsedTime += Time.deltaTime;
+			if(elapsedTime>=DelayTime)
+			{
+				Application.LoadLevel("level 1");
+			}
+			
+		}
+
+	}
+	void FixedUpdate()
+	{
+		Debug.Log("elapsed time:" + elapsedTime);
 	}
 
     void OnGUI() {
-        if (GUI.Button(new Rect(100, 100, 250, 100), "Server")) {
-            DataGod.isClient = false;
-			DataGod.currentGameState = DataGod.GameMode.NetWorkPlay;
-            GoToGame();
-        }
-        if (GUI.Button(new Rect(100, 250, 250, 100), "Client")) {
-            DataGod.isClient = true;
-			DataGod.currentGameState = DataGod.GameMode.NetWorkPlay;
-            GoToGame();
-        }
-		if (GUI.Button(new Rect(400, 100, 250, 100), "TalentTree")) {
-			DataGod.isClient = false;
-			DataGod.currentGameState = DataGod.GameMode.Menu;
-			GoToTalents();
-		}
-		if (GUI.Button(new Rect(400, 250, 250, 100), "DEMO")) {
-			DataGod.isClient = false;
-			DataGod.currentGameState = DataGod.GameMode.Demo;
-			LoadDemo();
-		}
+		if(!loadingDemo&&!loadingTalents&&!loadingGame)
+		{
+	        if (GUI.Button(new Rect(100, 100, 250, 100), "Server")) {
+	            DataGod.isClient = false;
+				Camera.main.animation.Play();
+				loadingGame = true;
+				DataGod.currentGameState = DataGod.GameMode.NetWorkPlay;
+	        
+	        }
+	        if (GUI.Button(new Rect(100, 250, 250, 100), "Client")) {
+	            DataGod.isClient = true;
+				Camera.main.animation.Play();
+				loadingGame = true;
+				DataGod.currentGameState = DataGod.GameMode.NetWorkPlay;
+
+	        }
+			if (GUI.Button(new Rect(400, 100, 250, 100), "TalentTree")) {
+				DataGod.isClient = false;
+				Camera.main.animation.Play();
+				DataGod.currentGameState = DataGod.GameMode.Menu;
+				loadingTalents = true;
+		
+			}
+			if (GUI.Button(new Rect(400, 250, 250, 100), "DEMO")) {
+				DataGod.isClient = false;
+				Camera.main.animation.Play();
+				DataGod.currentGameState = DataGod.GameMode.Demo;
+				loadingDemo = true;
+			}
+		}else GUI.enabled = false;
 
     }
-	private void LoadDemo() {
-		Application.LoadLevel("level 1");
-	}
-    private void GoToGame() {
-        Application.LoadLevel("level 1");
-    }
-	private void GoToTalents()
-	{
-		Application.LoadLevel("Skill Tree");
-	}
+    
+
 }
