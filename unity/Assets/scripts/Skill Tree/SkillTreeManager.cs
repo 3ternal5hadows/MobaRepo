@@ -24,6 +24,20 @@ public class SkillTreeManager : MonoBehaviour
     {
         mouseScreenPosition = Input.mousePosition;
         GameObject.Find("TotalPointsText").GetComponent<TextMesh>().text = DataGod.talentPoints + "";
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            GameObject resetButton = GameObject.Find("ResetButtonBackground");
+            if (resetButton.GetComponent<SkillTreeButton>().MouseHit(MouseWorldPosition))
+            {
+                ResetNodes();
+            }
+            GameObject mainMenuButton = GameObject.Find("MainMenuButtonBackground");
+            if (mainMenuButton.GetComponent<SkillTreeButton>().MouseHit(MouseWorldPosition))
+            {
+                Application.LoadLevel("MainMenu");
+            }
+        }
     }
 
     public void ResetNodes()

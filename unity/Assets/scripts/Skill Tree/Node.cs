@@ -46,6 +46,11 @@ public class Node : MonoBehaviour {
     public Sprite lockedSpriteWithPoints;
     private Transform unlockedEffect;
     private SpriteRenderer unlockedEffectSpriteRenderer;
+    private GameObject secondStar;
+    public GameObject connectionParticle;
+    private Timer connectionParticleTimer;
+    private float unlockedEffectAlpha;
+    private bool unlockedEffectEnabled;
 
     private const float NODE_COLLISION_RADIUS = 0.25f;
 
@@ -78,16 +83,21 @@ public class Node : MonoBehaviour {
         input = GameObject.Find("SkillTreeManager").GetComponent<SkillTreeManager>();
         lockedSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         unlockedEffect = transform.FindChild("UnlockedNodeEffect");
+        unlockedEffect.Rotate(new Vector3(0, 0, 1), Random.Range(0,360));
         unlockedEffectSpriteRenderer = unlockedEffect.GetComponent<SpriteRenderer>();
+        connectionParticleTimer = new Timer(0.2f);
         if (isStartingNode)
         {
             nodeLevel = 5;
-            unlockedEffectSpriteRenderer.enabled = true;
+            unlockedEffectAlpha = 1;
+            secondStar = (GameObject)Instantiate(unlockedEffect.gameObject, new Vector3(transform.position.x, transform.position.y, -1.9f), Quaternion.identity);
+            secondStar.transform.Rotate(new Vector3(0, 0, 1), Random.Range(0, 360));
         }
         else
         {
-            unlockedEffectSpriteRenderer.enabled = false;
+            unlockedEffectAlpha = 0;
         }
+        SetUnlockedEffectColor();
 	}
 	// Update is called once per frame
 	void Update () {
@@ -95,10 +105,7 @@ public class Node : MonoBehaviour {
         position = new Vector2(transform.position.x, transform.position.y);
         mouseOver = MouseOver();
         UpdateBackground();
-        if (unlockedEffectSpriteRenderer.enabled)
-        {
-            unlockedEffect.Rotate(new Vector3(0, 0, 1), 60 * Time.deltaTime);
-        }
+        UpdateRotationalEffects();
 
         if (LeftClicked())
         {
@@ -116,8 +123,42 @@ public class Node : MonoBehaviour {
                 NodeLevel--;
             }
         }
+        UpdateConnectionEffect();
 	}
-
+    private void SetUnlockedEffectColor()
+    {
+        unlockedEffectSpriteRenderer.color = Color.white * unlockedEffectAlpha;
+    }
+    private void UpdateRotationalEffects()
+    {
+        if (unlockedEffectSpriteRenderer.enabled)
+        {
+            unlockedEffect.Rotate(new Vector3(0, 0, 1), 60 * Time.deltaTime);
+            if (isStartingNode)
+            {
+                secondStar.transform.Rotate(new Vector3(0, 0, 1), 43 * Time.deltaTime);
+            }
+        }
+    }
+    private void UpdateConnectionEffect()
+    {
+        connectionParticleTimer.Update();
+        if (connectionParticleTimer.HasCompleted())
+        {
+            for (int i = 0; i < adjacentNodes.Count; i++)
+            {
+                if (NodeLevel > 0 & adjacentNodes[i].GetComponent<Node>().NodeLevel > 0)
+                {
+                    if (NodeLevel >= DataGod.POINTS_REQUIRED_FOR_NEXT_NODE |
+                        adjacentNodes[i].GetComponent<Node>().NodeLevel >= DataGod.POINTS_REQUIRED_FOR_NEXT_NODE)
+                    {
+                        GameObject newEffect = (GameObject)Instantiate(connectionParticle, transform.position, Quaternion.identity);
+                        newEffect.GetComponent<NodeConnectionParticle>().target = adjacentNodes[i];
+                    }
+                }
+            }
+        }
+    }
     private bool CanRemove()
     {
         if (isStartingNode)
@@ -219,7 +260,7 @@ public class Node : MonoBehaviour {
 
         if (locked)
         {
-            unlockedEffectSpriteRenderer.enabled = false;
+            unlockedEffectEnabled = false;
             if (NodeLevel > 0)
             {
                 SetSprite(lockedSpriteWithPoints);
@@ -240,11 +281,11 @@ public class Node : MonoBehaviour {
         {
             if (NodeLevel < DataGod.MAXIMUM_NODE_LEVEL)
             {
-                unlockedEffectSpriteRenderer.enabled = true;
+                unlockedEffectEnabled = true;
             }
             else
             {
-                unlockedEffectSpriteRenderer.enabled = false;
+                unlockedEffectEnabled = false;
             }
             if (mouseOver)
             {
@@ -255,6 +296,29 @@ public class Node : MonoBehaviour {
                 SetSprite(unlockedSprite);
             }
         }
+        if (unlockedEffectEnabled)
+        {
+            if (unlockedEffectAlpha < 1)
+            {
+                unlockedEffectAlpha += Time.deltaTime * 2;
+            }
+            else
+            {
+                unlockedEffectAlpha = 1;
+            }
+        }
+        else
+        {
+            if (unlockedEffectAlpha > 0)
+            {
+                unlockedEffectAlpha -= Time.deltaTime * 2;
+            }
+            else
+            {
+                unlockedEffectAlpha = 0;
+            }
+        }
+        SetUnlockedEffectColor();
     }
     private void SetSprite(Sprite sprite)
     {
@@ -288,6 +352,9 @@ public class Node : MonoBehaviour {
     }
     public void Reset()
     {
-        NodeLevel = 0;
+        if (!isStartingNode)
+        {
+            NodeLevel = 0;
+        }
     }
 }
