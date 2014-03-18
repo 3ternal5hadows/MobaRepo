@@ -9,6 +9,7 @@ public class ShurikenScript : MonoBehaviour {
 	public Vector3 acceleration;
 	public float rotationalVelocity;
 	public float rotationalAcceleration;
+	public float damp;
 
 	// Use this for initialization
 	void Awake(){
