@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Node : MonoBehaviour {
     public List<GameObject> adjacentNodes;
+    public bool isStartingNode;
     private int nodeLevel;
     public int NodeLevel
     {
@@ -38,7 +39,7 @@ public class Node : MonoBehaviour {
     private bool mouseOver;
     private Vector2 position;
     private Vector2 mousePosition;
-    private Sprite lockedSprite;
+    public Sprite lockedSprite;
     public Sprite unlockedSprite;
     public Sprite mouseOverLockedSprite;
     public Sprite mouseOverUnlockedSprite;
@@ -48,13 +49,6 @@ public class Node : MonoBehaviour {
 
     private const float NODE_COLLISION_RADIUS = 0.25f;
 
-    /// <summary>
-    /// Returns true if the node is one of the starting nodes
-    /// </summary>
-    public bool IsStartingNode
-    {
-        get { return adjacentNodes.Count <= 2; }
-    }
     /// <summary>
     /// Returns true if node has at least 1 point in it
     /// </summary>
@@ -85,7 +79,15 @@ public class Node : MonoBehaviour {
         lockedSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         unlockedEffect = transform.FindChild("UnlockedNodeEffect");
         unlockedEffectSpriteRenderer = unlockedEffect.GetComponent<SpriteRenderer>();
-        unlockedEffectSpriteRenderer.enabled = false;
+        if (isStartingNode)
+        {
+            nodeLevel = 5;
+            unlockedEffectSpriteRenderer.enabled = true;
+        }
+        else
+        {
+            unlockedEffectSpriteRenderer.enabled = false;
+        }
 	}
 	// Update is called once per frame
 	void Update () {
@@ -118,6 +120,10 @@ public class Node : MonoBehaviour {
 
     private bool CanRemove()
     {
+        if (isStartingNode)
+        {
+            return false;
+        }
         if (NodeLevel <= 0)
         {
             return false;
@@ -146,7 +152,7 @@ public class Node : MonoBehaviour {
         while (queue.Count > 0)
         {
             currentNode = queue[0];
-            if (currentNode.GetComponent<Node>().IsStartingNode & currentNode.GetComponent<Node>().NodeLevel >= DataGod.POINTS_REQUIRED_FOR_NEXT_NODE)
+            if (currentNode.GetComponent<Node>().isStartingNode & currentNode.GetComponent<Node>().NodeLevel >= DataGod.POINTS_REQUIRED_FOR_NEXT_NODE)
             {
                 return true;
             }
@@ -181,9 +187,9 @@ public class Node : MonoBehaviour {
     }
     private bool PrerequisitesMet()
     {
-        if (IsStartingNode)
+        if (isStartingNode)
         {
-            return true;
+            return false;
         }
         foreach (GameObject node in adjacentNodes)
         {
@@ -196,6 +202,10 @@ public class Node : MonoBehaviour {
     }
     private void UpdateBackground()
     {
+        if (isStartingNode)
+        {
+            return;
+        }
         bool locked = true;
 
         if (NodeLevel < DataGod.MAXIMUM_NODE_LEVEL & PrerequisitesMet() & DataGod.talentPoints > 0)

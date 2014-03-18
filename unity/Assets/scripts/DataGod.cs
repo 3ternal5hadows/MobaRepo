@@ -12,4 +12,6 @@ public class DataGod {
     public const int MAXTALENTPOINTS = 50;
     public static int talentPoints = MAXTALENTPOINTS;
     public const int MAXIMUM_NODE_LEVEL = 5;
+    //Specific Talent tree variables
+    public static int[,] skillTreeData = new int[3, 10];
 }
