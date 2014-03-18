@@ -23,6 +23,7 @@ public class SkillTreeManager : MonoBehaviour
     void Update()
     {
         mouseScreenPosition = Input.mousePosition;
+        GameObject.Find("TotalPointsText").GetComponent<TextMesh>().text = DataGod.talentPoints + "";
     }
 
     public void ResetNodes()

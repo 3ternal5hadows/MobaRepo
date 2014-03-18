@@ -42,6 +42,9 @@ public class Node : MonoBehaviour {
     public Sprite unlockedSprite;
     public Sprite mouseOverLockedSprite;
     public Sprite mouseOverUnlockedSprite;
+    public Sprite lockedSpriteWithPoints;
+    private Transform unlockedEffect;
+    private SpriteRenderer unlockedEffectSpriteRenderer;
 
     private const float NODE_COLLISION_RADIUS = 0.25f;
 
@@ -80,6 +83,9 @@ public class Node : MonoBehaviour {
         SetText();
         input = GameObject.Find("SkillTreeManager").GetComponent<SkillTreeManager>();
         lockedSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
+        unlockedEffect = transform.FindChild("UnlockedNodeEffect");
+        unlockedEffectSpriteRenderer = unlockedEffect.GetComponent<SpriteRenderer>();
+        unlockedEffectSpriteRenderer.enabled = false;
 	}
 	// Update is called once per frame
 	void Update () {
@@ -87,6 +93,10 @@ public class Node : MonoBehaviour {
         position = new Vector2(transform.position.x, transform.position.y);
         mouseOver = MouseOver();
         UpdateBackground();
+        if (unlockedEffectSpriteRenderer.enabled)
+        {
+            unlockedEffect.Rotate(new Vector3(0, 0, 1), 60 * Time.deltaTime);
+        }
 
         if (LeftClicked())
         {
@@ -186,25 +196,59 @@ public class Node : MonoBehaviour {
     }
     private void UpdateBackground()
     {
-        bool shine = false;
+        bool locked = true;
 
         if (NodeLevel < DataGod.MAXIMUM_NODE_LEVEL & PrerequisitesMet() & DataGod.talentPoints > 0)
         {
-            shine = true;
+            locked = false;
         }
         if (NodeLevel > 0 & CanRemove())
         {
-            shine = true;
+            locked = false;
         }
 
-        if (mouseOver)
+        if (locked)
         {
-            gameObject.GetComponent<SpriteRenderer>().sprite = (shine) ? mouseOverUnlockedSprite : mouseOverLockedSprite;
+            unlockedEffectSpriteRenderer.enabled = false;
+            if (NodeLevel > 0)
+            {
+                SetSprite(lockedSpriteWithPoints);
+            }
+            else
+            {
+                if (mouseOver)
+                {
+                    SetSprite(mouseOverLockedSprite);
+                }
+                else
+                {
+                    SetSprite(lockedSprite);
+                }
+            }
         }
         else
         {
-            gameObject.GetComponent<SpriteRenderer>().sprite = (shine) ? unlockedSprite : lockedSprite;
+            if (NodeLevel < DataGod.MAXIMUM_NODE_LEVEL)
+            {
+                unlockedEffectSpriteRenderer.enabled = true;
+            }
+            else
+            {
+                unlockedEffectSpriteRenderer.enabled = false;
+            }
+            if (mouseOver)
+            {
+                SetSprite(mouseOverUnlockedSprite);
+            }
+            else
+            {
+                SetSprite(unlockedSprite);
+            }
         }
+    }
+    private void SetSprite(Sprite sprite)
+    {
+        gameObject.GetComponent<SpriteRenderer>().sprite = sprite;
     }
     private bool LeftClicked() {
         return (mouseOver & Input.GetMouseButtonDown(0));
