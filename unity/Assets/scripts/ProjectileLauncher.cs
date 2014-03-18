@@ -102,6 +102,7 @@ public class ProjectileLauncher : MonoBehaviour {
 					{
 						chargingSpell.gameObject.GetComponent<ShurikenScript>().addForce(predShurikenForce, transform.forward);
 						chargingSpell.gameObject.GetComponent<ShurikenScript>().addRotationalForce(predShurikenSpin,1);
+						chargingSpell.gameObject.GetComponent<ShurikenScript>().player = this.transform.parent.parent.gameObject;
 					}
 
 					MouseJustPressed = true;
@@ -119,9 +120,10 @@ public class ProjectileLauncher : MonoBehaviour {
 				if(Input.GetMouseButtonUp(0)&&MouseJustPressed)
 				{
 					MouseJustPressed = false;
-					chargingSpell.transform.parent = null;
+
 					if(chargingSpell.gameObject.tag == "projectile")
 					{
+						chargingSpell.transform.parent = null;
 						chargingSpell.AddComponent<Rigidbody>();
 						chargingSpell.GetComponent<SphereCollider>().enabled = true;
 						Debug.Log(scale);
