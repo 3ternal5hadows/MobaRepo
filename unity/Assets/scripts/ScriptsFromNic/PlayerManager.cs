@@ -7,6 +7,8 @@ public class PlayerManager : MonoBehaviour {
 	int status;
 
     public GameObject healthPentagon;
+
+	private Vector3 spawnPosition;
 	
     //Hey Nic, I made some changes :D
 	// Player Attribute variables
@@ -49,6 +51,8 @@ public class PlayerManager : MonoBehaviour {
         healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
 
         gameObject.GetComponentInChildren<DamageObject>().source = gameObject;
+
+		spawnPosition = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -90,6 +94,8 @@ public class PlayerManager : MonoBehaviour {
             }
         }
 
+
+
 	}
 	public void Attack()
 	{
@@ -123,6 +129,12 @@ public class PlayerManager : MonoBehaviour {
             statusEffectsOnPlayer.Add(statusEffect);
         }
         healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+
+		if(health <= 0)
+		{
+			transform.position = spawnPosition;
+			health = maxHealth;
+		}
     }
 }
 public class Weapon : MonoBehaviour
