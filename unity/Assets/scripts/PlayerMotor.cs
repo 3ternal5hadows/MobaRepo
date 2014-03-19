@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 
 public class PlayerMotor : MonoBehaviour {
-	
 	Vector3 difference;	
 	Vector3 accelerationGravityRight = Vector3.zero;
 	Vector3 accelerationGravityLeft = Vector3.zero;
@@ -57,8 +56,7 @@ public class PlayerMotor : MonoBehaviour {
 		{
 			if(networkView.isMine)
 			{
-				DetectInput();	
-
+                DetectInput();
 				ResolvePhysics();
 			}
 		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
