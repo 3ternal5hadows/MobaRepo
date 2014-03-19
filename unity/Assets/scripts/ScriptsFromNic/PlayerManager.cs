@@ -5,18 +5,23 @@ using System.Collections.Generic;
 public class PlayerManager : MonoBehaviour {
 
 	int status;
+
+    public GameObject healthPentagon;
 	
+    //Hey Nic, I made some changes :D
 	// Player Attribute variables
-	public float health;
-	public float dodgeCoolDown;
+    private int health;
+    private int maxHealth;
+	private float dodgeCoolDown;
 	public List<Weapon> toolBelt;
+    public int teamNumber;
 	
 	//{ **Bools for status Effects** 
-	public bool burning;
-	public bool chilled;
-	public bool shocked;
-	public bool poisoned;
-	public bool blinded;
+    private bool burning;
+    private bool chilled;
+    private bool shocked;
+    private bool poisoned;
+    private bool blinded;
 	//}
 	public List<StatusEffects> statusEffectsOnPlayer;
 	
@@ -29,46 +34,61 @@ public class PlayerManager : MonoBehaviour {
 	*/
 	
 	//{ **Methods for adding Status Effect to Players**
-	public void Burn(float baseDamage){statusEffectsOnPlayer.Add (new BurnEffect(baseDamage));}
-	public void Blind(float duration){statusEffectsOnPlayer.Add(new BlindEffect(duration));}
-	public void Freeze(float duration){statusEffectsOnPlayer.Add(new FrostEffect(duration));}
-	public void Shock(float duration){statusEffectsOnPlayer.Add(new ShockEffect(duration));}
-	public void Poison(float baseDamage){statusEffectsOnPlayer.Add (new BurnEffect(baseDamage));}
+    //public void Burn(float baseDamage){statusEffectsOnPlayer.Add (new BurnEffect(baseDamage));}
+    //public void Blind(float duration){statusEffectsOnPlayer.Add(new BlindEffect(duration));}
+    //public void Freeze(float duration){statusEffectsOnPlayer.Add(new FrostEffect(duration));}
+    //public void Shock(float duration){statusEffectsOnPlayer.Add(new ShockEffect(duration));}
+    //public void Poison(float baseDamage){statusEffectsOnPlayer.Add (new BurnEffect(baseDamage));}
 	//}
 	
 	void Start () {
 		statusEffectsOnPlayer = new List<StatusEffects>();
+        maxHealth = DataGod.PLAYER_MAX_HEALTH;
+        health = maxHealth;
+
+        healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
+
+        gameObject.GetComponentInChildren<DamageObject>().source = gameObject;
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void Update ()
 	{
+        healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
 		//updates all statuses on player if they exist
-		foreach(StatusEffects status in statusEffectsOnPlayer)
-		{
-			status.Update();
-			if(status is BurnEffect)
-			{
-				burning = true;
-				health -= status.dps * Time.deltaTime;
-			}
-			if(status is FrostEffect)
-			{
-				chilled = true;
-			}
-			if(status is ShockEffect)
-			{
-				shocked = true;
-			}
-			if(status is PoisonEffect)
-			{
-				poisoned = true;
-			}
-			if(status is BlindEffect)
-			{
-				blinded = true;
-			}
-		}
+        for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
+        {
+            StatusEffects status = statusEffectsOnPlayer[i];
+            //foreach(StatusEffects status in statusEffectsOnPlayer)
+            //{
+            status.Update();
+            /*if (status is BurnEffect)
+            {
+                burning = true;
+                health -= (int)(status.dps * Time.deltaTime);
+            }
+            if (status is FrostEffect)
+            {
+                chilled = true;
+            }
+            if (status is ShockEffect)
+            {
+                shocked = true;
+            }
+            if (status is PoisonEffect)
+            {
+                poisoned = true;
+            }
+            if (status is BlindEffect)
+            {
+                blinded = true;
+            }*/
+            if (status.Expired())
+            {
+                statusEffectsOnPlayer.RemoveAt(i);
+                i--;
+            }
+        }
 
 	}
 	public void Attack()
@@ -80,6 +100,30 @@ public class PlayerManager : MonoBehaviour {
 	{
 		//loads weapon of type into empty weapon slot
 	}
+
+    /// <summary>
+    /// Removes damage from player's health
+    /// </summary>
+    /// <param name="damage">The amount of damage</param>
+    public void TakeDamage(int damage)
+    {
+        TakeDamage(damage, null);
+    }
+    /// <summary>
+    /// Removes damage from player's health
+    /// </summary>
+    /// <param name="damage">The amount of damage</param>
+    /// <param name="statusEffect">The Status Effect of the attack</param>
+    public void TakeDamage(int damage, StatusEffects statusEffect)
+    {
+        health -= damage;
+        if (statusEffect != null)
+        {
+            statusEffect.playerScript = this;
+            statusEffectsOnPlayer.Add(statusEffect);
+        }
+        healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+    }
 }
 public class Weapon : MonoBehaviour
 {

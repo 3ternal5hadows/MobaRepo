@@ -14,4 +14,7 @@ public class DataGod {
     public const int MAXIMUM_NODE_LEVEL = 5;
     //Specific Talent tree variables
     public static int[,] skillTreeData = new int[3, 10];
+
+    //Player constants
+    public const int PLAYER_MAX_HEALTH = 100000;
 }

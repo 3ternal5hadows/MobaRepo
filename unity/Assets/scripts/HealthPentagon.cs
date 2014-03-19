@@ -32,7 +32,7 @@ public class HealthPentagon : MonoBehaviour {
 
     public void Show(float health, float maxHealth)
     {
-        alpha = 1;
+        alpha = 1.5f;
         int frame = (int)(health/maxHealth*(frames.Count-1));
         gameObject.GetComponent<SpriteRenderer>().sprite = frames[frame];
     }

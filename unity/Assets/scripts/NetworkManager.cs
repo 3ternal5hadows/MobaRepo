@@ -15,8 +15,6 @@ public class NetworkManager : MonoBehaviour {
     private bool connected;
     private bool connecting;
 
-
-
     private void StartServer() {
         Network.InitializeServer(4, 25555, !Network.HavePublicAddress());
 
@@ -43,9 +41,10 @@ public class NetworkManager : MonoBehaviour {
     }
 
     void OnConnectedToServer() {
-
-		GameObject newPlayer = Network.Instantiate(player, SpawnPoint[Network.connections.Length%SpawnPoint.Length].transform.position, Quaternion.identity, 0)as GameObject;
+        int teamNumber = Network.connections.Length%SpawnPoint.Length;
+		GameObject newPlayer = Network.Instantiate(player, SpawnPoint[teamNumber].transform.position, Quaternion.identity, 0)as GameObject;
 		Camera.main.GetComponent<CameraFollowMouse>().Player = newPlayer;
+        newPlayer.GetComponent<PlayerManager>().teamNumber = teamNumber;
         connected = true;
     }
 
@@ -73,8 +72,10 @@ public class NetworkManager : MonoBehaviour {
 		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
 		{
 			GameObject demoPlayer = Instantiate(DemoPlayer, new Vector3(0,10,0), Quaternion.identity) as GameObject;
+            //GameObject demoPlayer2 = Instantiate(DemoPlayer, new Vector3(5, 10, 0), Quaternion.identity) as GameObject;
 			Camera.main.GetComponent<CameraFollowMouse>().Player = demoPlayer;
-
+            demoPlayer.GetComponent<PlayerManager>().teamNumber = 0;
+            //demoPlayer2.GetComponent<PlayerManager>().teamNumber = 1;
 		}
 	}
 	

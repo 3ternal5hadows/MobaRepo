@@ -88,12 +88,13 @@ public class ProjectileLauncher : MonoBehaviour {
 			}
 
 
-			if(reloadTime > ReloadSpeed)
+			if(reloadTime >= ReloadSpeed)
 			{
 				
 				if(Input.GetMouseButtonDown(0))
 				{	
 					chargingSpell = Instantiate(weapons[currentWeaponEquipped], this.transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
+                    chargingSpell.GetComponent<DamageObject>().source = transform.parent.parent.gameObject;
 					if(chargingSpell.gameObject.tag == "projectile")
 					{
 						chargingSpell.transform.parent = this.transform;
