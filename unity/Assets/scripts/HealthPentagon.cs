@@ -34,6 +34,10 @@ public class HealthPentagon : MonoBehaviour {
     {
         alpha = 1.5f;
         int frame = (int)(health/maxHealth*(frames.Count-1));
+        if (frame < 0)
+        {
+            frame = 0;
+        }
         gameObject.GetComponent<SpriteRenderer>().sprite = frames[frame];
     }
 }
