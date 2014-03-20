@@ -72,10 +72,10 @@ public class NetworkManager : MonoBehaviour {
 		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
 		{
 			GameObject demoPlayer = Instantiate(DemoPlayer, new Vector3(0,10,0), Quaternion.identity) as GameObject;
-            //GameObject demoPlayer2 = Instantiate(DemoPlayer, new Vector3(5, 10, 0), Quaternion.identity) as GameObject;
+            GameObject demoPlayer2 = Instantiate(DemoPlayer, new Vector3(5, 10, 0), Quaternion.identity) as GameObject;
 			Camera.main.GetComponent<CameraFollowMouse>().Player = demoPlayer;
             demoPlayer.GetComponent<PlayerManager>().teamNumber = 0;
-            //demoPlayer2.GetComponent<PlayerManager>().teamNumber = 1;
+            demoPlayer2.GetComponent<PlayerManager>().teamNumber = 1;
 		}
 	}
 	
