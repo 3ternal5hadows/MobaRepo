@@ -39,6 +39,7 @@ public class ProjectileLauncher : MonoBehaviour {
 					if(Input.GetMouseButtonDown(0))
 					{
 						chargingSpell = Network.Instantiate(projectile, this.transform.position, Quaternion.LookRotation(transform.forward),0) as GameObject;
+                        chargingSpell.GetComponent<DamageObject>().source = transform.parent.parent.gameObject;
 						chargingSpell.transform.parent = this.transform;
 						MouseJustPressed = true;
 

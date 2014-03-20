@@ -48,9 +48,10 @@ public class PlayerManager : MonoBehaviour {
         maxHealth = DataGod.PLAYER_MAX_HEALTH;
         health = maxHealth;
 
-        healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
-
-        gameObject.GetComponentInChildren<DamageObject>().source = gameObject;
+        if (networkView != null)
+        {
+            healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
+        }
 
 		spawnPosition = transform.position;
 	}
@@ -58,7 +59,10 @@ public class PlayerManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-        healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
+        if (networkView != null)
+        {
+            healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
+        }
 		//updates all statuses on player if they exist
         for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
         {
@@ -128,13 +132,27 @@ public class PlayerManager : MonoBehaviour {
             statusEffect.playerScript = this;
             statusEffectsOnPlayer.Add(statusEffect);
         }
-        healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+        if (networkView != null)
+        {
+            if (!networkView.isMine)
+            {
+                healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+            }
+        }
 
 		if(health <= 0)
 		{
 			transform.position = spawnPosition;
 			health = maxHealth;
 		}
+    }
+    /// <summary>
+    /// Returns the player's health as a number between 0 and 1
+    /// </summary>
+    /// <returns>a number between 0 and 1</returns>
+    public float GetHealthPercentage()
+    {
+        return ((float)health / (float)maxHealth);
     }
 }
 public class Weapon : MonoBehaviour
