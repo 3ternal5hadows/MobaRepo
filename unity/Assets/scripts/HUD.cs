@@ -57,72 +57,69 @@ public class HUD : MonoBehaviour {
 
     void OnGUI()
     {
-        if (networkView != null)
+        if (networkView.isMine)
         {
-            if (networkView.isMine)
+            PlayerManager player = gameObject.GetComponent<PlayerManager>();
+            int frame = (int)(player.GetHealthPercentage() * (frames.Count - 1));
+            if (frame < 0)
             {
-                PlayerManager player = gameObject.GetComponent<PlayerManager>();
-                int frame = (int)(player.GetHealthPercentage() * (frames.Count - 1));
-                if (frame < 0)
-                {
-                    frame = 0;
-                }
-                GUI.DrawTexture(healthBarRect, frames[frame].texture);
-                GUI.DrawTexture(killsIconRect, killsIcon.texture);
-                GUI.DrawTexture(deathsIconRect, deathsIcon.texture);
-                string str = player.kills+"";
-                Vector2 size = killsAndDeathsStyle.CalcSize(new GUIContent(str));
-                killCountRect.width = size.x;
-                killCountRect.height = size.y;
-                DrawWithGlow(killCountRect, str, killsAndDeathsStyle, Color.black, 3);
-                str = player.deaths + "";
-                size = killsAndDeathsStyle.CalcSize(new GUIContent(str));
-                deathCountRect.width = size.x;
-                deathCountRect.height = size.y;
-                DrawWithGlow(deathCountRect, str, killsAndDeathsStyle, Color.black, 3);
+                frame = 0;
+            }
+            GUI.DrawTexture(healthBarRect, frames[frame].texture);
+            GUI.DrawTexture(killsIconRect, killsIcon.texture);
+            GUI.DrawTexture(deathsIconRect, deathsIcon.texture);
+            string str = player.kills + "";
+            Vector2 size = killsAndDeathsStyle.CalcSize(new GUIContent(str));
+            killCountRect.width = size.x;
+            killCountRect.height = size.y;
+            DrawWithGlow(killCountRect, str, killsAndDeathsStyle, Color.black, 3);
+            str = player.deaths + "";
+            size = killsAndDeathsStyle.CalcSize(new GUIContent(str));
+            deathCountRect.width = size.x;
+            deathCountRect.height = size.y;
+            DrawWithGlow(deathCountRect, str, killsAndDeathsStyle, Color.black, 3);
 
-                Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height-Input.mousePosition.y);
-                string tooltip = "";
+            Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            string tooltip = "";
 
-                if (healthBarRect.Contains(mousePosition))
-                {
-                    tooltip = "Health";
-                }
-                else if (new Rect(killsIconRect.xMin, killsIconRect.yMin, killCountRect.xMax - killsIconRect.xMin, killsIconRect.height).Contains(mousePosition))
-                {
-                    tooltip = "Kills";
-                }
-                else if (new Rect(deathsIconRect.xMin, deathsIconRect.yMin, deathCountRect.xMax - deathsIconRect.xMin, deathsIconRect.height).Contains(mousePosition))
-                {
-                    tooltip = "Deaths";
-                }
+            if (healthBarRect.Contains(mousePosition))
+            {
+                tooltip = "Health";
+            }
+            else if (new Rect(killsIconRect.xMin, killsIconRect.yMin, killCountRect.xMax - killsIconRect.xMin, killsIconRect.height).Contains(mousePosition))
+            {
+                tooltip = "Kills";
+            }
+            else if (new Rect(deathsIconRect.xMin, deathsIconRect.yMin, deathCountRect.xMax - deathsIconRect.xMin, deathsIconRect.height).Contains(mousePosition))
+            {
+                tooltip = "Deaths";
+            }
 
-                if (tooltip != "")
-                {
-                    size = tooltipStyle.CalcSize(new GUIContent(tooltip));
-                    DrawWithGlow(new Rect(mousePosition.x, mousePosition.y - 20, size.x, size.y), tooltip, tooltipStyle, Color.black, 2);
-                }
+            if (tooltip != "")
+            {
+                size = tooltipStyle.CalcSize(new GUIContent(tooltip));
+                DrawWithGlow(new Rect(mousePosition.x, mousePosition.y - 20, size.x, size.y), tooltip, tooltipStyle, Color.black, 2);
+            }
 
-                if (showDeathInfo)
+            if (showDeathInfo)
+            {
+                string killerName = player.killer.name;
+                string killedByString = "Killed by";
+                Vector2 stringSize = nameStyle.CalcSize(new GUIContent(killerName));
+                Vector2 stringSize2 = nameStyle.CalcSize(new GUIContent(killedByString));
+                Vector2 skullSize = new Vector2(deathSkull.texture.width, deathSkull.texture.height);
+                if (stringSize2.x > stringSize.x)
                 {
-                    string killerName = player.killer.name;
-                    string killedByString = "Killed by";
-                    Vector2 stringSize = nameStyle.CalcSize(new GUIContent(killerName));
-                    Vector2 stringSize2 = nameStyle.CalcSize(new GUIContent(killedByString));
-                    Vector2 skullSize = new Vector2(deathSkull.texture.width, deathSkull.texture.height);
-                    if (stringSize2.x > stringSize.x)
-                    {
-                        stringSize = stringSize2;
-                    }
-                    stringSize.y = 0;
-                    Vector2 totalSize = skullSize + stringSize;
-                    GUI.DrawTexture(new Rect(Screen.width / 2 - totalSize.x / 2, Screen.height / 2 - totalSize.y / 2,
-                        skullSize.x, skullSize.y), deathSkull.texture);
-                    DrawWithGlow(new Rect(Screen.width / 2 - totalSize.x / 2 + skullSize.x, Screen.height / 2 - totalSize.y / 2 + 60,
-                        skullSize.x, skullSize.y), killerName, nameStyle, Color.black, 5);
-                    DrawWithGlow(new Rect(Screen.width / 2 - totalSize.x / 2 + skullSize.x, Screen.height / 2 - totalSize.y / 2 + 10,
-                        skullSize.x, skullSize.y), killedByString, killedByStyle, Color.black, 5);
+                    stringSize = stringSize2;
                 }
+                stringSize.y = 0;
+                Vector2 totalSize = skullSize + stringSize;
+                GUI.DrawTexture(new Rect(Screen.width / 2 - totalSize.x / 2, Screen.height / 2 - totalSize.y / 2,
+                    skullSize.x, skullSize.y), deathSkull.texture);
+                DrawWithGlow(new Rect(Screen.width / 2 - totalSize.x / 2 + skullSize.x, Screen.height / 2 - totalSize.y / 2 + 60,
+                    skullSize.x, skullSize.y), killerName, nameStyle, Color.black, 5);
+                DrawWithGlow(new Rect(Screen.width / 2 - totalSize.x / 2 + skullSize.x, Screen.height / 2 - totalSize.y / 2 + 10,
+                    skullSize.x, skullSize.y), killedByString, killedByStyle, Color.black, 5);
             }
         }
     }

@@ -18,55 +18,26 @@ public class PlayerManager : MonoBehaviour {
 	private float dodgeCoolDown;
 	public List<Weapon> toolBelt;
     public int teamNumber;
-    //KDA
+    //Kill/Death
     public int kills;
     public int deaths;
     //The player who killed this player
     public PlayerManager killer;
     public string name;
-	
-	//{ **Bools for status Effects** 
-    private bool burning;
-    private bool chilled;
-    private bool shocked;
-    private bool poisoned;
-    private bool blinded;
-	//}
+
 	public List<StatusEffects> statusEffectsOnPlayer;
-	
-	/*elemental effects
-		0 = Burn
-		1 = Blind
-		2 = Freeze
-		3 = Shock
-		4 = Poison
-	*/
-	
-	//{ **Methods for adding Status Effect to Players**
-    //public void Burn(float baseDamage){statusEffectsOnPlayer.Add (new BurnEffect(baseDamage));}
-    //public void Blind(float duration){statusEffectsOnPlayer.Add(new BlindEffect(duration));}
-    //public void Freeze(float duration){statusEffectsOnPlayer.Add(new FrostEffect(duration));}
-    //public void Shock(float duration){statusEffectsOnPlayer.Add(new ShockEffect(duration));}
-    //public void Poison(float baseDamage){statusEffectsOnPlayer.Add (new BurnEffect(baseDamage));}
-	//}
-	
-	void Start () {
+
+    void Start()
+    {
         gameObject.GetComponentInChildren<ProjectileLauncher>().source = gameObject;
-		statusEffectsOnPlayer = new List<StatusEffects>();
+        statusEffectsOnPlayer = new List<StatusEffects>();
         maxHealth = DataGod.PLAYER_MAX_HEALTH;
         health = maxHealth;
-
-        if (networkView != null)
-        {
-            healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
-        }
-
-		spawnPosition = transform.position;
-
+        healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
+        spawnPosition = transform.position;
         respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
-
         name = DataGod.GetRandomName();
-	}
+    }
 	
 	// Update is called once per frame
     void Update()
@@ -87,30 +58,7 @@ public class PlayerManager : MonoBehaviour {
             for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
             {
                 StatusEffects status = statusEffectsOnPlayer[i];
-                //foreach(StatusEffects status in statusEffectsOnPlayer)
-                //{
                 status.Update();
-                /*if (status is BurnEffect)
-                {
-                    burning = true;
-                    health -= (int)(status.dps * Time.deltaTime);
-                }
-                if (status is FrostEffect)
-                {
-                    chilled = true;
-                }
-                if (status is ShockEffect)
-                {
-                    shocked = true;
-                }
-                if (status is PoisonEffect)
-                {
-                    poisoned = true;
-                }
-                if (status is BlindEffect)
-                {
-                    blinded = true;
-                }*/
                 if (status.Expired())
                 {
                     statusEffectsOnPlayer.RemoveAt(i);
@@ -118,6 +66,37 @@ public class PlayerManager : MonoBehaviour {
                 }
             }
         }
+    }
+    /// <summary>
+    /// Checks if the player is stunned
+    /// </summary>
+    /// <returns>Returns true if stunned, false if not</returns>
+    public bool IsStunned()
+    {
+        foreach (StatusEffects status in statusEffectsOnPlayer)
+        {
+            if (status is ShockEffect)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    /// <summary>
+    /// Calculates the total slow on the player, returns a number that the player's speed should be divided by
+    /// </summary>
+    /// <returns>returns a number that the player's speed should be divided by</returns>
+    public float GetTotalSlows()
+    {
+        float slowPercentage = 0;
+        foreach (StatusEffects status in statusEffectsOnPlayer)
+        {
+            if (status is FrostEffect)
+            {
+                slowPercentage += ((FrostEffect)status).slowPercentage;
+            }
+        }
+        return 1 + slowPercentage;
     }
 	public void Attack()
 	{
@@ -155,12 +134,9 @@ public class PlayerManager : MonoBehaviour {
             }
             if (showHealthPentagon)
             {
-                if (networkView != null)
+                if (!networkView.isMine)
                 {
-                    if (!networkView.isMine)
-                    {
-                        healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
-                    }
+                    healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
                 }
             }
 
@@ -189,42 +165,4 @@ public class PlayerManager : MonoBehaviour {
         return ((float)health / (float)maxHealth);
     }
 }
-public class Weapon : MonoBehaviour
-{
-	//skillTree Effects on all weapons
 
-	public float atkSpd;
-	public float pwrAtkActivateSpd;
-	public float pwrtAtkCoolDown;
-	public float pwrAtkDmg;
-	public float nrmAtkDmg;
-	public float critDmgBns;
-	public float specEffectivePrcnt;
-	public float procChnce;
-	
-}
-public class Melee:Weapon
-{
-	public float critWindowRnge;
-	public enum elemType{shadow,fire,ice,lightning,poison};
-	elemType element;
-}
-public class Ranged:Weapon
-{
-	public float chnceToNotConsumeCombo;
-	public enum elemType{shadow,fire,ice,lightning,poison};
-	elemType element;
-}
-public class Spell:Weapon
-{
-	public float comboTmrLngth;
-
-	public enum elemType{shadow,fire,ice,lightning};
-	elemType primary;
-	elemType secondary;
-
-	public bool didItCrit()
-	{
-		return procChnce>=Random.Range (0.0f,100.0f);
-	}
-}

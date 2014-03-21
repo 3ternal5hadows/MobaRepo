@@ -4,26 +4,23 @@ using System.Collections;
 //Got rid of some code redundancies,
 //Added use of player's takeDamage method instead of modifying health directly
 // - Greg :D
-public class StatusEffectInfo : MonoBehaviour
+public class StatusEffectInfo
 {
     public StatusEffects statusEffect;
     public float chanceToApply;
-    public float duration;
 
-    void Start()
+    public StatusEffectInfo(StatusEffects statusEffect, float chanceToApply)
     {
-    }
-    void Update()
-    {
+        this.statusEffect = statusEffect;
+        this.chanceToApply = chanceToApply;
     }
 }
 public class StatusEffects  {
-	//public GameObject playerObject;
     public PlayerManager playerScript;
     public PlayerManager sourceScript;
 	
 	protected float elapsedTime;
-    private float duration;
+    protected float duration;
 	protected int count;
 
     public StatusEffects(float duration)
@@ -41,21 +38,32 @@ public class StatusEffects  {
     {
         return (elapsedTime >= duration);
     }
+
+    public virtual StatusEffects GetNewEffect()
+    {
+        return null;
+    }
 }
 public class DamagingStatusEffect : StatusEffects
 {
-    public int dps;
+    protected int dps;
+    protected int baseDamage; 
 
     public DamagingStatusEffect(float duration)
         : base(duration)
     {
     }
+
+    public override StatusEffects GetNewEffect()
+    {
+        return new DamagingStatusEffect(duration);
+    }
 }
 public class BurnEffect : DamagingStatusEffect {
-	int duration ;
-    public BurnEffect(float baseDamage, float duration)
+    public BurnEffect(int baseDamage, float duration)
         : base(duration)
     {
+        this.baseDamage = baseDamage;
         dps = (int)((baseDamage * 0.1f) / duration);
         count = 1;
     }
@@ -63,30 +71,41 @@ public class BurnEffect : DamagingStatusEffect {
 	// Update is called once per frame
 	public override void Update () 
 	{
+        base.Update();
 		if(elapsedTime >= count)
 		{
 			count++;
-			//playerObject.GetComponent<PlayerManager>().health -= dps;
             playerScript.TakeDamage(dps, null);
 		}
 	}
+
+    public override StatusEffects GetNewEffect()
+    {
+        return new BurnEffect(baseDamage, duration);
+    }
 }
 public class FrostEffect : StatusEffects
 {
-	float duration;
-    public FrostEffect(float _duration)
+    public float slowPercentage;
+    public FrostEffect(float _duration, float slowPercentage)
         : base(_duration)
     {
         count = 1;
+        this.slowPercentage = slowPercentage;
     }
 	
 	// Update is called once per frame
 	public override void Update () 
 	{
+        base.Update();
 	}
+
+    public override StatusEffects GetNewEffect()
+    {
+        return new FrostEffect(duration, slowPercentage);
+    }
 }
 public class BlindEffect : StatusEffects {
-	float duration;
     public BlindEffect(float _duration)
         : base(_duration)
     {
@@ -100,6 +119,11 @@ public class BlindEffect : StatusEffects {
 		if(elapsedTime >= count)
 			count++;
 	}
+
+    public override StatusEffects GetNewEffect()
+    {
+        return new BlindEffect(duration);
+    }
 }
 public class ShockEffect : DamagingStatusEffect {
 	float duration;
@@ -112,36 +136,42 @@ public class ShockEffect : DamagingStatusEffect {
 	// Update is called once per frame
 	public override void Update ()
 	{
+        base.Update();
 		if(elapsedTime >= count)
 		{
 			count++;
 			playerScript.TakeDamage(dps, null);
 		}
 	}
+    public override StatusEffects GetNewEffect()
+    {
+        return new ShockEffect(duration);
+    }
 }
-public class PoisonEffect : DamagingStatusEffect {
+//public class PoisonEffect : DamagingStatusEffect {
 
-	int duration;
-	public PoisonEffect(float baseDamage, float duration) : base(duration)
-	{
-		dps = (int)(baseDamage * 0.05f) + 1;
-		count = 1;
-	}
+//    int duration;
+//    public PoisonEffect(float baseDamage, float duration) : base(duration)
+//    {
+//        dps = (int)(baseDamage * 0.05f) + 1;
+//        count = 1;
+//    }
 	
-	//	IEnumerator killDuration()
-	//	{
-	//		playerObject.GetComponent<PlayerManager>().health -= dps;
-	//
-	//		yield return new WaitForSeconds(1);
-	//
-	//	}
-	// Update is called once per frame
-	public override void Update () 
-	{
-		if(elapsedTime >= count)
-		{
-			count++;
-            playerScript.TakeDamage(dps, null);
-		}
-	}
-}
+//    //	IEnumerator killDuration()
+//    //	{
+//    //		playerObject.GetComponent<PlayerManager>().health -= dps;
+//    //
+//    //		yield return new WaitForSeconds(1);
+//    //
+//    //	}
+//    // Update is called once per frame
+//    public override void Update () 
+//    {
+//        base.Update();
+//        if(elapsedTime >= count)
+//        {
+//            count++;
+//            playerScript.TakeDamage(dps, null);
+//        }
+//    }
+//}
