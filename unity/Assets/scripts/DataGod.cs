@@ -17,4 +17,14 @@ public class DataGod {
 
     //Player constants
     public const int PLAYER_MAX_HEALTH = 100000;
+    public const int PLAYER_RESPAWN_TIME = 5;
+
+    private static string[] defaultNames = new string[] { "Greg", "Nic", "Wes", "Brad", "Michael",
+        "Andrew", "Bob", "Catherine", "Delilah", "Elizabeth", "Fred", "George", "Hubert", "Ingred", "Julia",
+    "Kyle", "Liam", "Maria", "Nancy", "Odin", "Patrick", "Quinn", "Riley", "Samantha", "Thomas", "Umer", "Victoria",
+    "Witchita", "Xavior", "Yawn", "Zachary"};
+    public static string GetRandomName()
+    {
+        return defaultNames[Random.Range(0, defaultNames.Length)];
+    }
 }
