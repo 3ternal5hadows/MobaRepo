@@ -21,7 +21,7 @@ public class DamageObject : MonoBehaviour {
             if ((source == hit.gameObject & canDamageSource) |
                 source.GetComponent<PlayerManager>().teamNumber != hit.gameObject.GetComponent<PlayerManager>().teamNumber)
             {
-                hit.gameObject.GetComponent<PlayerManager>().TakeDamage(damage, statusEffect);
+                hit.gameObject.GetComponent<PlayerManager>().TakeDamage(damage, source.GetComponent<PlayerManager>(), statusEffect);
             }
         }
     }

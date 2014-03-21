@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour {
     public GameObject healthPentagon;
 
 	private Vector3 spawnPosition;
+    private Timer respawnTimer;
 	
     //Hey Nic, I made some changes :D
 	// Player Attribute variables
@@ -17,6 +18,12 @@ public class PlayerManager : MonoBehaviour {
 	private float dodgeCoolDown;
 	public List<Weapon> toolBelt;
     public int teamNumber;
+    //KDA
+    public int kills;
+    public int deaths;
+    //The player who killed this player
+    public PlayerManager killer;
+    public string name;
 	
 	//{ **Bools for status Effects** 
     private bool burning;
@@ -44,6 +51,7 @@ public class PlayerManager : MonoBehaviour {
 	//}
 	
 	void Start () {
+        gameObject.GetComponentInChildren<ProjectileLauncher>().source = gameObject;
 		statusEffectsOnPlayer = new List<StatusEffects>();
         maxHealth = DataGod.PLAYER_MAX_HEALTH;
         health = maxHealth;
@@ -54,53 +62,63 @@ public class PlayerManager : MonoBehaviour {
         }
 
 		spawnPosition = transform.position;
+
+        respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
+
+        name = DataGod.GetRandomName();
 	}
 	
 	// Update is called once per frame
-	void Update ()
-	{
-        if (networkView != null)
+    void Update()
+    {
+        healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
+
+        if (health <= 0)
         {
-            healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
-        }
-		//updates all statuses on player if they exist
-        for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
-        {
-            StatusEffects status = statusEffectsOnPlayer[i];
-            //foreach(StatusEffects status in statusEffectsOnPlayer)
-            //{
-            status.Update();
-            /*if (status is BurnEffect)
+            respawnTimer.Update();
+            if (respawnTimer.HasCompleted())
             {
-                burning = true;
-                health -= (int)(status.dps * Time.deltaTime);
-            }
-            if (status is FrostEffect)
-            {
-                chilled = true;
-            }
-            if (status is ShockEffect)
-            {
-                shocked = true;
-            }
-            if (status is PoisonEffect)
-            {
-                poisoned = true;
-            }
-            if (status is BlindEffect)
-            {
-                blinded = true;
-            }*/
-            if (status.Expired())
-            {
-                statusEffectsOnPlayer.RemoveAt(i);
-                i--;
+                Respawn();
             }
         }
-
-
-
-	}
+        else
+        {
+            //updates all statuses on player if they exist
+            for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
+            {
+                StatusEffects status = statusEffectsOnPlayer[i];
+                //foreach(StatusEffects status in statusEffectsOnPlayer)
+                //{
+                status.Update();
+                /*if (status is BurnEffect)
+                {
+                    burning = true;
+                    health -= (int)(status.dps * Time.deltaTime);
+                }
+                if (status is FrostEffect)
+                {
+                    chilled = true;
+                }
+                if (status is ShockEffect)
+                {
+                    shocked = true;
+                }
+                if (status is PoisonEffect)
+                {
+                    poisoned = true;
+                }
+                if (status is BlindEffect)
+                {
+                    blinded = true;
+                }*/
+                if (status.Expired())
+                {
+                    statusEffectsOnPlayer.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+    }
 	public void Attack()
 	{
 		//if left hand
@@ -115,36 +133,52 @@ public class PlayerManager : MonoBehaviour {
     /// Removes damage from player's health
     /// </summary>
     /// <param name="damage">The amount of damage</param>
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, PlayerManager source, bool showHealthPentagon = true)
     {
-        TakeDamage(damage, null);
+        TakeDamage(damage, source, null, showHealthPentagon);
     }
     /// <summary>
     /// Removes damage from player's health
     /// </summary>
     /// <param name="damage">The amount of damage</param>
     /// <param name="statusEffect">The Status Effect of the attack</param>
-    public void TakeDamage(int damage, StatusEffects statusEffect)
+    public void TakeDamage(int damage, PlayerManager source, StatusEffects statusEffect, bool showHealthPentagon = true)
     {
-        health -= damage;
-        if (statusEffect != null)
+        if (health > 0)
         {
-            statusEffect.playerScript = this;
-            statusEffectsOnPlayer.Add(statusEffect);
-        }
-        if (networkView != null)
-        {
-            if (!networkView.isMine)
+            health -= damage;
+            if (statusEffect != null)
             {
-                healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+                statusEffect.playerScript = this;
+                statusEffect.sourceScript = source;
+                statusEffectsOnPlayer.Add(statusEffect);
+            }
+            if (showHealthPentagon)
+            {
+                if (networkView != null)
+                {
+                    if (!networkView.isMine)
+                    {
+                        healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+                    }
+                }
+            }
+
+            if (health <= 0)
+            {
+                killer = source;
+                gameObject.GetComponent<HUD>().showDeathInfo = true;
+                killer.kills++;
+                deaths++;
             }
         }
+    }
 
-		if(health <= 0)
-		{
-			transform.position = spawnPosition;
-			health = maxHealth;
-		}
+    private void Respawn()
+    {
+        transform.position = spawnPosition;
+        health = maxHealth;
+        gameObject.GetComponent<HUD>().showDeathInfo = false;
     }
     /// <summary>
     /// Returns the player's health as a number between 0 and 1
