@@ -4,9 +4,23 @@ using System.Collections;
 //Got rid of some code redundancies,
 //Added use of player's takeDamage method instead of modifying health directly
 // - Greg :D
+public class StatusEffectInfo : MonoBehaviour
+{
+    public StatusEffects statusEffect;
+    public float chanceToApply;
+    public float duration;
+
+    void Start()
+    {
+    }
+    void Update()
+    {
+    }
+}
 public class StatusEffects  {
 	//public GameObject playerObject;
     public PlayerManager playerScript;
+    public PlayerManager sourceScript;
 	
 	protected float elapsedTime;
     private float duration;
