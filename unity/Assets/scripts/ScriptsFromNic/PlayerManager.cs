@@ -23,6 +23,7 @@ public class PlayerManager : MonoBehaviour {
     public int deaths;
     //The player who killed this player
     public PlayerManager killer;
+    private ScoreKeeper scoreKeeper;
     public string name;
 
 	public List<StatusEffects> statusEffectsOnPlayer;
@@ -46,6 +47,8 @@ public class PlayerManager : MonoBehaviour {
 
             networkView.RPC("SendData", RPCMode.AllBuffered, name);
         }
+
+        scoreKeeper = GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
     }
 
     [RPC]
@@ -58,6 +61,7 @@ public class PlayerManager : MonoBehaviour {
     void Update()
     {
         healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
+        healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
 
         if (health <= 0)
         {
@@ -161,6 +165,7 @@ public class PlayerManager : MonoBehaviour {
                 gameObject.GetComponent<HUD>().showDeathInfo = true;
                 killer.kills++;
                 deaths++;
+                scoreKeeper.teamScore[killer.teamNumber]++;
             }
         }
     }
@@ -180,4 +185,3 @@ public class PlayerManager : MonoBehaviour {
         return ((float)health / (float)maxHealth);
     }
 }
-

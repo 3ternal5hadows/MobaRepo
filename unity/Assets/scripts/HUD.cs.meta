@@ -2,7 +2,11 @@ fileFormatVersion: 2
 guid: 5803cb39b927e274caedc9673e25b439
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - deathSkull: {fileID: 21300000, guid: 14724926a3a310541baa0be27d90898f, type: 3}
+  - killsIcon: {fileID: 21300000, guid: ff34e92738f927b41bbbc12603ac3f49, type: 3}
+  - deathsIcon: {fileID: 21300000, guid: d3bf6873810e9304983f8c0ae516b50a, type: 3}
+  - font: {fileID: 12800000, guid: 9a8715bcd8218584ebf48d4fd6859d56, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

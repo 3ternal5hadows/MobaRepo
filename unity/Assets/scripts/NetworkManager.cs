@@ -14,9 +14,12 @@ public class NetworkManager : MonoBehaviour {
     private Timer connectionTimeoutTimer;
     private bool connected;
     private bool connecting;
+    private int numConnected;
+    private bool connectionsSet;
+    private bool playerInitialized;
 
     private void StartServer() {
-        Network.InitializeServer(4, 25555, !Network.HavePublicAddress());
+        Network.InitializeServer(6, 25555, !Network.HavePublicAddress());
 
 
         MasterServer.RegisterHost(typeName, gameName);
@@ -36,16 +39,12 @@ public class NetworkManager : MonoBehaviour {
 
 
     private void JoinServer(HostData hostData) {
-
         Network.Connect(hostData);
     }
 
     void OnConnectedToServer() {
-        int teamNumber = Network.connections.Length%SpawnPoint.Length;
-		GameObject newPlayer = Network.Instantiate(player, SpawnPoint[teamNumber].transform.position, Quaternion.identity, 0)as GameObject;
-		Camera.main.GetComponent<CameraFollowMouse>().Player = newPlayer;
-        newPlayer.GetComponent<PlayerManager>().teamNumber = teamNumber;
         connected = true;
+        networkView.RPC("AddConnection", RPCMode.Server);
     }
 
     void OnServerInitialized() {
@@ -55,6 +54,8 @@ public class NetworkManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        playerInitialized = false;
+        connectionsSet = false;
 		SpawnPoint = GameObject.FindGameObjectsWithTag("SpawnPoint");
 		if(DataGod.currentGameState == DataGod.GameMode.NetWorkPlay)
 		{
@@ -82,23 +83,41 @@ public class NetworkManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (DataGod.isClient) {
-            if (!connected) {
-                if (connecting) {
+            if (!connected)
+            {
+                if (connecting)
+                {
                     connectionTimeoutTimer.Update();
-                    if (connectionTimeoutTimer.HasCompleted()) {
+                    if (connectionTimeoutTimer.HasCompleted())
+                    {
                         connecting = false;
                     }
-                } else {
-                    if (hostList == null) {
+                }
+                else
+                {
+                    if (hostList == null)
+                    {
                         LookForServer();
-                    } else if (hostList.Length == 0) {
+                    }
+                    else if (hostList.Length == 0)
+                    {
                         LookForServer();
-                    } else {
+                    }
+                    else
+                    {
                         connecting = true;
                         connectionTimeoutTimer.Reset();
                         Network.Connect(hostList[0]);
                     }
                 }
+            }
+            else if (!playerInitialized)
+            {
+                int teamNumber = numConnected % SpawnPoint.Length;
+                GameObject newPlayer = Network.Instantiate(player, SpawnPoint[teamNumber].transform.position, Quaternion.identity, 0) as GameObject;
+                Camera.main.GetComponent<CameraFollowMouse>().Player = newPlayer;
+                newPlayer.GetComponent<PlayerManager>().teamNumber = teamNumber;
+                playerInitialized = true;
             }
         }
 		if(DataGod.currentGameState == DataGod.GameMode.Demo)
@@ -113,5 +132,19 @@ public class NetworkManager : MonoBehaviour {
         if (hostRefreshTimer.HasCompleted()) {
             RefreshHostList();
         }
+    }
+
+    [RPC]
+    public void AddConnection()
+    {
+        numConnected++;
+        networkView.RPC("SendConnectionCount", RPCMode.OthersBuffered, numConnected);
+    }
+
+    [RPC]
+    public void SendConnectionCount(int num)
+    {
+        numConnected = num;
+        connectionsSet = true;
     }
 }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class HUD : MonoBehaviour {
     //HUD stuff
+    private PlayerManager player;
+
     public List<Sprite> powerCooldownFrames;
     public List<Sprite> normalCooldownFrames;
     public List<Sprite> weaponIcons;
@@ -23,6 +25,9 @@ public class HUD : MonoBehaviour {
     private Rect deathsIconRect;
     private Rect killCountRect;
     private Rect deathCountRect;
+    private GUIStyle teamKillsStyle;
+
+    private ScoreKeeper scoreKeeper;
 
 	// Use this for initialization
 	void Start () {
@@ -50,6 +55,13 @@ public class HUD : MonoBehaviour {
         deathsIconRect = new Rect(15, 130, 40, 40);
         killCountRect = new Rect(65, 85, 1, 1);
         deathCountRect = new Rect(65, 130, 1, 1);
+
+        teamKillsStyle = new GUIStyle();
+        teamKillsStyle.font = font;
+        teamKillsStyle.fontSize = 50;
+        teamKillsStyle.normal.textColor = Color.green;
+
+        scoreKeeper = GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
 	}
 	
 	// Update is called once per frame
@@ -60,7 +72,7 @@ public class HUD : MonoBehaviour {
     {
         if (networkView.isMine)
         {
-            PlayerManager player = gameObject.GetComponent<PlayerManager>();
+            player = gameObject.GetComponent<PlayerManager>();
             int frame = (int)(player.GetHealthPercentage() * (frames.Count - 1));
             if (frame < 0)
             {
@@ -79,6 +91,15 @@ public class HUD : MonoBehaviour {
             deathCountRect.width = size.x;
             deathCountRect.height = size.y;
             DrawWithGlow(deathCountRect, str, killsAndDeathsStyle, Color.black, 3);
+
+            DrawTeamScore(player.teamNumber);
+            for (int i = 0; i < scoreKeeper.teamScore.Length; i++)
+            {
+                if (i != player.teamNumber)
+                {
+                    DrawTeamScore(i);
+                }
+            }
 
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             string tooltip = "";
@@ -123,6 +144,22 @@ public class HUD : MonoBehaviour {
                     skullSize.x, skullSize.y), killedByString, killedByStyle, Color.black, 5);
             }
         }
+    }
+
+    private void DrawTeamScore(int i)
+    {
+        string str = "" + scoreKeeper.teamScore[i];
+        Vector2 size = teamKillsStyle.CalcSize(new GUIContent(str));
+        if (player.teamNumber == i)
+        {
+            teamKillsStyle.normal.textColor = Color.green;
+        }
+        else
+        {
+            teamKillsStyle.normal.textColor = Color.red;
+        }
+        Rect teamKillsRect = new Rect(Screen.width / 2 + i * 50 - size.x / 2 - (scoreKeeper.numTeams - 1) * 25, 30 - size.y / 2, size.x, size.y);
+        DrawWithGlow(teamKillsRect, str, teamKillsStyle, Color.black, 4);
     }
 
     private void DrawWithGlow(Rect rect, string str, GUIStyle guiStyle, Color glowColor, int glowSize)
