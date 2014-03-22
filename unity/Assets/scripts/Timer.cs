@@ -31,6 +31,10 @@ public class Timer {
         }
         return false;
     }
+    public float GetPercentComplete()
+    {
+        return time / maxTime;
+    }
 
     public void Update() {
         if (!paused) {
