@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class HUD : MonoBehaviour {
+    //HUD stuff
     public List<Sprite> powerCooldownFrames;
     public List<Sprite> normalCooldownFrames;
     public List<Sprite> weaponIcons;

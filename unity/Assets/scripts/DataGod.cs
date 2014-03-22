@@ -27,4 +27,15 @@ public class DataGod {
     {
         return defaultNames[Random.Range(0, defaultNames.Length)];
     }
+
+    //Chat filter
+    #region Not for the faint of heart
+    public static string[] wordsWeDontLike = new string[] { "tank", "t@nk", "artillery"};
+    #endregion
+    private static string[] filterAlternateMessages = new string[] { "I like bunny rabbits", "This winter is too long",
+    "I'm such a noob", "Look it's a spider", "Mmm, that tasted purple"};
+    public static string GetRandomMessage()
+    {
+        return filterAlternateMessages[Random.Range(0, filterAlternateMessages.Length)];
+    }
 }

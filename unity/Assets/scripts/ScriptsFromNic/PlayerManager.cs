@@ -36,7 +36,22 @@ public class PlayerManager : MonoBehaviour {
         healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
         spawnPosition = transform.position;
         respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
-        name = DataGod.GetRandomName();
+
+        if (networkView.isMine)
+        {
+            name = DataGod.GetRandomName();
+            ChatManager chat = GameObject.Find("ChatManager").GetComponent<ChatManager>();
+            chat.playerName = name;
+            chat.player = this;
+
+            networkView.RPC("SendData", RPCMode.AllBuffered, name);
+        }
+    }
+
+    [RPC]
+    public void SendData(string name)
+    {
+        this.name = name;
     }
 	
 	// Update is called once per frame

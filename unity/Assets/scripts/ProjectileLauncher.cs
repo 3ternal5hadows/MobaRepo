@@ -49,7 +49,7 @@ public class ProjectileLauncher : MonoBehaviour {
 					{
 						chargingSpell = Network.Instantiate(projectile, this.transform.position, Quaternion.LookRotation(transform.forward),0) as GameObject;
 						chargingSpell.transform.parent = this.transform;
-                        networkView.RPC("SendSource", RPCMode.All, source);
+                        //networkView.RPC("SendSource", RPCMode.All, source);
 						MouseJustPressed = true;
 					}
 					if(Input.GetMouseButton(0))
