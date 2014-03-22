@@ -22,7 +22,7 @@ public class DataGod {
     private static string[] defaultNames = new string[] { "Greg", "Nic", "Wes", "Brad", "Michael",
         "Andrew", "Bob", "Catherine", "Delilah", "Elizabeth", "Fred", "George", "Hubert", "Ingred", "Julia",
     "Kyle", "Liam", "Maria", "Nancy", "Odin", "Patrick", "Quinn", "Riley", "Samantha", "Thomas", "Umer", "Victoria",
-    "Witchita", "Xavior", "Yawn", "Zachary"};
+    "Witchita", "Xavior", "Yawn", "Zachary","Baby Jesus"};
     public static string GetRandomName()
     {
         return defaultNames[Random.Range(0, defaultNames.Length)];

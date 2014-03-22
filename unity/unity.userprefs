@@ -1,9 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\ScriptsFromNic\PlayerManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\DataGod.cs">
     <Files>
       <File FileName="Assets\scripts\ScriptsFromNic\PlayerManager.cs" Line="127" Column="10" />
-      <File FileName="Assets\scripts\NetworkManager.cs" Line="71" Column="13" />
+      <File FileName="Assets\scripts\NetworkManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\DataGod.cs" Line="36" Column="71" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
