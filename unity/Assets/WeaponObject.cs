@@ -19,14 +19,14 @@ public class WeaponObject : MonoBehaviour {
 		elapsedTime+= Time.deltaTime;
 		if(Active)
 		{
-			slotedWeapon.gameObject.renderer.material.color = new Color(Mathf.Lerp(1.0f,0,elapsedTime),
-			                                                            Mathf.Lerp(1.0f,0,elapsedTime),
-			                                                            Mathf.Lerp(1.0f,0,elapsedTime));
-		}else 
-		{
 			slotedWeapon.gameObject.renderer.material.color = new Color(Mathf.Lerp(0,1.0f,elapsedTime),
 			                                                            Mathf.Lerp(0,1.0f,elapsedTime),
 			                                                            Mathf.Lerp(0,1.0f,elapsedTime));
+		}else 
+		{
+			slotedWeapon.gameObject.renderer.material.color = new Color(Mathf.Lerp(1.0f,0,elapsedTime),
+			                                                            Mathf.Lerp(1.0f,0,elapsedTime),
+			                                                            Mathf.Lerp(1.0f,0,elapsedTime));
 		}
 
 	}
