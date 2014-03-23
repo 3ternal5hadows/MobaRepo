@@ -77,7 +77,6 @@ public class PlayerManager : MonoBehaviour {
         {
             for (int i = 0; i < networkManager.allPlayers.Count; i++)
             {
-                GameObject.Find("ChatManager").GetComponent<ChatManager>().networkView.RPC("SendChatMessage", RPCMode.AllBuffered, networkManager.allPlayers[i].teamNumber + " : " + teamNumber);
                 if (networkManager.allPlayers[i].teamNumber != teamNumber)
                 {
                     networkManager.allPlayers[i].allyMarker.SetActive(false);
