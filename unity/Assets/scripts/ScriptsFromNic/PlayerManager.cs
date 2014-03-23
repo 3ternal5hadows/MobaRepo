@@ -22,39 +22,48 @@ public class PlayerManager : MonoBehaviour {
     public int kills;
     public int deaths;
     //The player who killed this player
-    public PlayerManager killer;
+    public int killer;
     private ScoreKeeper scoreKeeper;
+    private NetworkManager networkManager;
     public string name;
 
 	public List<StatusEffects> statusEffectsOnPlayer;
 
+    public int playerNumber;
+
     void Start()
     {
-        gameObject.GetComponentInChildren<ProjectileLauncher>().source = gameObject;
+        networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
+        networkManager.allPlayers.Add(this);
+
         statusEffectsOnPlayer = new List<StatusEffects>();
-        maxHealth = DataGod.PLAYER_MAX_HEALTH;
-        health = maxHealth;
         healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
         spawnPosition = transform.position;
         respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
 
-        if (networkView.isMine)
+        if (DataGod.isServer)
         {
+            maxHealth = DataGod.PLAYER_MAX_HEALTH;
+            health = maxHealth;
             name = DataGod.GetRandomName();
-            ChatManager chat = GameObject.Find("ChatManager").GetComponent<ChatManager>();
-            chat.playerName = name;
-            chat.player = this;
-
-            networkView.RPC("SendData", RPCMode.AllBuffered, name);
+            networkView.RPC("SendData", RPCMode.AllBuffered, name, health, maxHealth);
         }
 
         scoreKeeper = GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
     }
 
     [RPC]
-    public void SendData(string name)
+    public void SendData(string name, int health, int maxHealth)
     {
         this.name = name;
+        this.health = health;
+        this.maxHealth = maxHealth;
+        if (networkView.isMine)
+        {
+            ChatManager chat = GameObject.Find("ChatManager").GetComponent<ChatManager>();
+            chat.playerName = name;
+            chat.player = this;
+        }
     }
 	
 	// Update is called once per frame
@@ -74,16 +83,16 @@ public class PlayerManager : MonoBehaviour {
         else
         {
             //updates all statuses on player if they exist
-            for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
-            {
-                StatusEffects status = statusEffectsOnPlayer[i];
-                status.Update();
-                if (status.Expired())
-                {
-                    statusEffectsOnPlayer.RemoveAt(i);
-                    i--;
-                }
-            }
+            //for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
+            //{
+            //    StatusEffects status = statusEffectsOnPlayer[i];
+            //    status.Update();
+            //    if (status.Expired())
+            //    {
+            //        statusEffectsOnPlayer.RemoveAt(i);
+            //        i--;
+            //    }
+            //}
         }
     }
     /// <summary>
@@ -131,7 +140,7 @@ public class PlayerManager : MonoBehaviour {
     /// Removes damage from player's health
     /// </summary>
     /// <param name="damage">The amount of damage</param>
-    public void TakeDamage(int damage, PlayerManager source, bool showHealthPentagon = true)
+    public void TakeDamage(int damage, int source, bool showHealthPentagon = true)
     {
         TakeDamage(damage, source, null, showHealthPentagon);
     }
@@ -140,34 +149,60 @@ public class PlayerManager : MonoBehaviour {
     /// </summary>
     /// <param name="damage">The amount of damage</param>
     /// <param name="statusEffect">The Status Effect of the attack</param>
-    public void TakeDamage(int damage, PlayerManager source, StatusEffects statusEffect, bool showHealthPentagon = true)
+    public void TakeDamage(int damage, int source, StatusEffects statusEffect, bool showHealthPentagon = true)
     {
-        if (health > 0)
+        if (DataGod.isServer)
         {
-            health -= damage;
-            if (statusEffect != null)
+            if (health > 0)
             {
-                statusEffect.playerScript = this;
-                statusEffect.sourceScript = source;
-                statusEffectsOnPlayer.Add(statusEffect);
-            }
-            if (showHealthPentagon)
-            {
-                if (!networkView.isMine)
-                {
-                    healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
-                }
-            }
-
-            if (health <= 0)
-            {
-                killer = source;
-                gameObject.GetComponent<HUD>().showDeathInfo = true;
-                killer.kills++;
-                deaths++;
-                scoreKeeper.teamScore[killer.teamNumber]++;
+                networkView.RPC("RPCTakeDamage", RPCMode.All, damage, source, (showHealthPentagon) ? 1 : 0);
+                //if (statusEffect != null)
+                //{
+                //    statusEffect.playerScript = this;
+                //    statusEffect.sourceScript = networkManager.allPlayers[source];
+                //    statusEffectsOnPlayer.Add(statusEffect);
+                //}
             }
         }
+    }
+
+    [RPC]
+    public void RPCTakeDamage(int damage, int source, int showHealthPentagon)
+    {
+        Debug.Log("Damage Recieved");
+        health -= damage;
+        if (showHealthPentagon != 0 & (!networkView.isMine | DataGod.isServer))
+        {
+            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+        }
+
+        if (health <= 0)
+        {
+            health = 0;
+            killer = source;
+            if (networkView.isMine)
+            {
+                gameObject.GetComponent<HUD>().showDeathInfo = true;
+            }
+            networkManager.allPlayers[killer].networkView.RPC("RPCAddKill", RPCMode.AllBuffered);
+            networkView.RPC("RPCAddDeath", RPCMode.AllBuffered);
+            if (DataGod.isServer)
+            {
+                scoreKeeper.networkView.RPC("RPCAddKill", RPCMode.AllBuffered, networkManager.allPlayers[killer].teamNumber);
+            }
+        }
+    }
+
+    [RPC]
+    public void RPCAddKill()
+    {
+        kills++;
+    }
+
+    [RPC]
+    public void RPCAddDeath()
+    {
+        deaths++;
     }
 
     private void Respawn()
@@ -183,5 +218,14 @@ public class PlayerManager : MonoBehaviour {
     public float GetHealthPercentage()
     {
         return ((float)health / (float)maxHealth);
+    }
+
+    [RPC]
+    public void SetPlayerNumber(int number, int teamNumber)
+    {
+        playerNumber = number;
+        this.teamNumber = teamNumber;
+        gameObject.GetComponentInChildren<ProjectileLauncher>().source = playerNumber;
+        gameObject.GetComponentInChildren<DamageObject>().source = playerNumber;
     }
 }

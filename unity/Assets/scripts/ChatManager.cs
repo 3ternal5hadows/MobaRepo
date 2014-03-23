@@ -57,7 +57,7 @@ public class ChatManager : MonoBehaviour {
             //We can make commands here
             if (chatMessage == "/suicide")
             {
-                player.TakeDamage(1000000, player, false);
+                player.TakeDamage(1000000, player.playerNumber, false);
             }
             else
             {
@@ -100,9 +100,12 @@ public class ChatManager : MonoBehaviour {
         Color tempColor = chatStyle.normal.textColor;
         for (int i = 0; i < chatMessages.Count; i++)
         {
-            if ((chatMessages[i].Remove(6)) == "Server")
+            if (chatMessages[i].Length > 6)
             {
-                chatStyle.normal.textColor = Color.red;
+                if ((chatMessages[i].Remove(6)) == "Server")
+                {
+                    chatStyle.normal.textColor = Color.red;
+                }
             }
             GUI.Label(new Rect(chatTextFieldRect.xMin, chatTextFieldRect.yMin + 25 * i - 25 * chatMessages.Count, chatTextFieldRect.width, chatTextFieldRect.height), chatMessages[i], chatStyle);
             chatStyle.normal.textColor = tempColor;

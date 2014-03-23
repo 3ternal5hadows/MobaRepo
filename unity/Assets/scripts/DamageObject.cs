@@ -4,7 +4,7 @@ using System.Collections;
 public class DamageObject : MonoBehaviour {
     public int damage;
     public bool canDamageSource;
-    public GameObject source;
+    public int source;
     public StatusEffects statusEffect;
 
 	// Use this for initialization
@@ -16,13 +16,23 @@ public class DamageObject : MonoBehaviour {
 
     void OnTriggerEnter(Collider hit)
     {
-        if (hit.gameObject.tag == "Player")
+        if (DataGod.isServer)
         {
-            if ((source == hit.gameObject & canDamageSource) |
-                source.GetComponent<PlayerManager>().teamNumber != hit.gameObject.GetComponent<PlayerManager>().teamNumber)
+            if (hit.gameObject.tag == "Player")
             {
-                hit.gameObject.GetComponent<PlayerManager>().TakeDamage(damage, source.GetComponent<PlayerManager>(), statusEffect);
+                PlayerManager sourceObject = GameObject.Find("NetworkManager").GetComponent<NetworkManager>().allPlayers[source];
+                if ((sourceObject.gameObject == hit.gameObject & canDamageSource) |
+                    sourceObject.teamNumber != hit.gameObject.GetComponent<PlayerManager>().teamNumber)
+                {
+                    hit.gameObject.GetComponent<PlayerManager>().TakeDamage(damage, sourceObject.playerNumber, statusEffect);
+                }
             }
         }
+    }
+
+    [RPC]
+    public void RPCSource(int source)
+    {
+        this.source = source;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NetworkManager : MonoBehaviour {
     private const string typeName = "NoMoreTanks";
@@ -18,9 +19,10 @@ public class NetworkManager : MonoBehaviour {
     private bool connectionsSet;
     private bool playerInitialized;
 
+    public List<PlayerManager> allPlayers;
+
     private void StartServer() {
         Network.InitializeServer(6, 25555, !Network.HavePublicAddress());
-
 
         MasterServer.RegisterHost(typeName, gameName);
         Network.sendRate = 500;
@@ -116,7 +118,7 @@ public class NetworkManager : MonoBehaviour {
                 int teamNumber = numConnected % SpawnPoint.Length;
                 GameObject newPlayer = Network.Instantiate(player, SpawnPoint[teamNumber].transform.position, Quaternion.identity, 0) as GameObject;
                 Camera.main.GetComponent<CameraFollowMouse>().Player = newPlayer;
-                newPlayer.GetComponent<PlayerManager>().teamNumber = teamNumber;
+                newPlayer.GetComponent<PlayerManager>().networkView.RPC("SetPlayerNumber", RPCMode.AllBuffered, numConnected, teamNumber);
                 playerInitialized = true;
             }
         }

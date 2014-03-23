@@ -20,7 +20,7 @@ public class ProjectileLauncher : MonoBehaviour {
 	float reloadTime;
 	bool MouseJustPressed;
 
-    public GameObject source;
+    public int source;
 
 
 	void Start () {
@@ -28,12 +28,6 @@ public class ProjectileLauncher : MonoBehaviour {
 		reloadTime=ReloadSpeed;
 		MouseJustPressed= false;
 	}
-
-    [RPC]
-    public void SendSource(GameObject source)
-    {
-        this.source = source;
-    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -48,8 +42,8 @@ public class ProjectileLauncher : MonoBehaviour {
 					if(Input.GetMouseButtonDown(0))
 					{
 						chargingSpell = Network.Instantiate(projectile, this.transform.position, Quaternion.LookRotation(transform.forward),0) as GameObject;
+                        chargingSpell.networkView.RPC("RPCSource", RPCMode.All, source);
 						chargingSpell.transform.parent = this.transform;
-                        //networkView.RPC("SendSource", RPCMode.All, source);
 						MouseJustPressed = true;
 					}
 					if(Input.GetMouseButton(0))
@@ -103,7 +97,7 @@ public class ProjectileLauncher : MonoBehaviour {
 				if(Input.GetMouseButtonDown(0))
 				{	
 					chargingSpell = Instantiate(weapons[currentWeaponEquipped], this.transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
-                    chargingSpell.GetComponent<DamageObject>().source = transform.parent.parent.gameObject;
+                    chargingSpell.GetComponent<DamageObject>().source = transform.parent.parent.gameObject.GetComponent<PlayerManager>().playerNumber;
 					if(chargingSpell.gameObject.tag == "projectile")
 					{
 						chargingSpell.transform.parent = this.transform;

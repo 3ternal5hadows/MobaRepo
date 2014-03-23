@@ -22,4 +22,10 @@ public class ScoreKeeper : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    [RPC]
+    public void RPCAddKill(int team)
+    {
+        teamScore[team]++;
+    }
 }

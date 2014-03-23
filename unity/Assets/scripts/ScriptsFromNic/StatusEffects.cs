@@ -75,7 +75,7 @@ public class BurnEffect : DamagingStatusEffect {
 		if(elapsedTime >= count)
 		{
 			count++;
-            playerScript.TakeDamage(dps, null);
+            playerScript.TakeDamage(dps, sourceScript.playerNumber, null);
 		}
 	}
 
@@ -140,7 +140,7 @@ public class ShockEffect : DamagingStatusEffect {
 		if(elapsedTime >= count)
 		{
 			count++;
-			playerScript.TakeDamage(dps, null);
+            playerScript.TakeDamage(dps, sourceScript.playerNumber, null);
 		}
 	}
     public override StatusEffects GetNewEffect()

@@ -28,6 +28,7 @@ public class HUD : MonoBehaviour {
     private GUIStyle teamKillsStyle;
 
     private ScoreKeeper scoreKeeper;
+    private NetworkManager networkManager;
 
 	// Use this for initialization
 	void Start () {
@@ -62,6 +63,7 @@ public class HUD : MonoBehaviour {
         teamKillsStyle.normal.textColor = Color.green;
 
         scoreKeeper = GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
+        networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 	}
 	
 	// Update is called once per frame
@@ -125,7 +127,7 @@ public class HUD : MonoBehaviour {
 
             if (showDeathInfo)
             {
-                string killerName = player.killer.name;
+                string killerName = networkManager.allPlayers[player.killer].name;
                 string killedByString = "Killed by";
                 Vector2 stringSize = nameStyle.CalcSize(new GUIContent(killerName));
                 Vector2 stringSize2 = nameStyle.CalcSize(new GUIContent(killedByString));
