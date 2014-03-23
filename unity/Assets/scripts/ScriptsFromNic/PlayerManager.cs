@@ -31,10 +31,14 @@ public class PlayerManager : MonoBehaviour {
 
     public int playerNumber;
 
+    public GameObject allyMarker;
+
     void Start()
     {
         networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         networkManager.allPlayers.Add(this);
+
+        allyMarker = transform.FindChild("AllyMarker").gameObject;
 
         statusEffectsOnPlayer = new List<StatusEffects>();
         healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
@@ -69,8 +73,27 @@ public class PlayerManager : MonoBehaviour {
 	// Update is called once per frame
     void Update()
     {
+        if (networkView.isMine)
+        {
+            for (int i = 0; i < networkManager.allPlayers.Count; i++)
+            {
+                GameObject.Find("ChatManager").GetComponent<ChatManager>().networkView.RPC("SendChatMessage", RPCMode.AllBuffered, networkManager.allPlayers[i].teamNumber + " : " + teamNumber);
+                if (networkManager.allPlayers[i].teamNumber != teamNumber)
+                {
+                    networkManager.allPlayers[i].allyMarker.SetActive(false);
+                }
+                else
+                {
+                    networkManager.allPlayers[i].allyMarker.SetActive(true);
+                }
+            }
+        }
+
         healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
-        healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+        if (DataGod.isServer)
+        {
+            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
+        }
 
         if (health <= 0)
         {
@@ -184,10 +207,10 @@ public class PlayerManager : MonoBehaviour {
             {
                 gameObject.GetComponent<HUD>().showDeathInfo = true;
             }
-            networkManager.allPlayers[killer].networkView.RPC("RPCAddKill", RPCMode.AllBuffered);
-            networkView.RPC("RPCAddDeath", RPCMode.AllBuffered);
             if (DataGod.isServer)
             {
+                networkManager.allPlayers[killer].networkView.RPC("RPCAddKill", RPCMode.AllBuffered);
+                networkView.RPC("RPCAddDeath", RPCMode.AllBuffered);
                 scoreKeeper.networkView.RPC("RPCAddKill", RPCMode.AllBuffered, networkManager.allPlayers[killer].teamNumber);
             }
         }
