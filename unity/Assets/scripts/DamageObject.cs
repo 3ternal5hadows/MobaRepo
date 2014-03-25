@@ -18,16 +18,26 @@ public class DamageObject : MonoBehaviour {
     {
         if (DataGod.isServer)
         {
-            if (hit.gameObject.tag == "Player")
+            Hit(hit);
+        }
+    }
+
+    protected virtual void Hit(Collider hit)
+    {
+        if (hit.gameObject.tag == "Player")
+        {
+            PlayerManager sourceObject = GameObject.Find("NetworkManager").GetComponent<NetworkManager>().allPlayers[source];
+            if ((sourceObject.gameObject == hit.gameObject & canDamageSource) |
+                sourceObject.teamNumber != hit.gameObject.GetComponent<PlayerManager>().teamNumber)
             {
-                PlayerManager sourceObject = GameObject.Find("NetworkManager").GetComponent<NetworkManager>().allPlayers[source];
-                if ((sourceObject.gameObject == hit.gameObject & canDamageSource) |
-                    sourceObject.teamNumber != hit.gameObject.GetComponent<PlayerManager>().teamNumber)
-                {
-                    hit.gameObject.GetComponent<PlayerManager>().TakeDamage(damage, sourceObject.playerNumber, statusEffect);
-                }
+                PlayerHit(hit, sourceObject);
             }
         }
+    }
+
+    protected virtual void PlayerHit(Collider hit, PlayerManager sourceObject)
+    {
+        hit.gameObject.GetComponent<PlayerManager>().TakeDamage(damage, sourceObject.playerNumber, statusEffect);
     }
 
     [RPC]

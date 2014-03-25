@@ -117,8 +117,9 @@ public class NetworkManager : MonoBehaviour {
             {
                 int teamNumber = numConnected % SpawnPoint.Length;
                 GameObject newPlayer = Network.Instantiate(player, SpawnPoint[teamNumber].transform.position, Quaternion.identity, 0) as GameObject;
+                newPlayer.GetComponent<PlayerManager>().playerNumber = numConnected;
+                newPlayer.GetComponent<PlayerManager>().teamNumber = teamNumber;
                 Camera.main.GetComponent<CameraFollowMouse>().Player = newPlayer;
-                newPlayer.GetComponent<PlayerManager>().networkView.RPC("SetPlayerNumber", RPCMode.AllBuffered, numConnected, teamNumber);
                 playerInitialized = true;
             }
         }

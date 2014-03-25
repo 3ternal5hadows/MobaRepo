@@ -43,6 +43,10 @@ public class PlayerManager : MonoBehaviour {
         statusEffectsOnPlayer = new List<StatusEffects>();
         healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
 
+        if (networkView.isMine)
+        {
+            networkView.RPC("SetPlayerNumber", RPCMode.AllBuffered, playerNumber, teamNumber);
+        }
         if (DataGod.isServer)
         {
             spawnPosition = transform.position;
