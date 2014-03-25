@@ -56,18 +56,12 @@ public class PlayerMotor : MonoBehaviour {
 		{
 			if(networkView.isMine)
 			{
-                if (gameObject.GetComponent<PlayerManager>().GetHealthPercentage() > 0)
-                {
-                    DetectInput();
-                }
+                DetectInput();
 				ResolvePhysics();
 			}
 		}else if(DataGod.currentGameState == DataGod.GameMode.Demo)
 		{
-            if (gameObject.GetComponent<PlayerManager>().GetHealthPercentage() > 0)
-            {
-                DetectInput();
-            }
+            DetectInput();
 			ResolvePhysics();
 		}
 	}

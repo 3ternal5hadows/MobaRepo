@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour {
 
     public GameObject healthPentagon;
 
-	private Vector3 spawnPosition;
+	public Vector3 spawnPosition;
     private Timer respawnTimer;
 	
     //Hey Nic, I made some changes :D
@@ -42,26 +42,30 @@ public class PlayerManager : MonoBehaviour {
 
         statusEffectsOnPlayer = new List<StatusEffects>();
         healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
-        spawnPosition = transform.position;
-        respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
 
         if (DataGod.isServer)
         {
+            spawnPosition = transform.position;
+            respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
             maxHealth = DataGod.PLAYER_MAX_HEALTH;
             health = maxHealth;
             name = DataGod.GetRandomName();
-            networkView.RPC("SendData", RPCMode.AllBuffered, name, health, maxHealth);
+            for (int i = 0; i < networkManager.allPlayers.Count; i++)
+            {
+                networkManager.allPlayers[i].networkView.RPC("SendData", RPCMode.All, networkManager.allPlayers[i].name, networkManager.allPlayers[i].health, networkManager.allPlayers[i].maxHealth, networkManager.allPlayers[i].spawnPosition);
+            }
         }
 
         scoreKeeper = GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
     }
 
     [RPC]
-    public void SendData(string name, int health, int maxHealth)
+    public void SendData(string name, int health, int maxHealth, Vector3 spawnPosition)
     {
         this.name = name;
         this.health = health;
         this.maxHealth = maxHealth;
+        this.spawnPosition = spawnPosition;
         if (networkView.isMine)
         {
             ChatManager chat = GameObject.Find("ChatManager").GetComponent<ChatManager>();
@@ -73,6 +77,17 @@ public class PlayerManager : MonoBehaviour {
 	// Update is called once per frame
     void Update()
     {
+        if (DataGod.isServer)
+        {
+            if (health <= 0)
+            {
+                respawnTimer.Update();
+                if (respawnTimer.HasCompleted())
+                {
+                    Respawn();
+                }
+            }
+        }
         if (networkView.isMine)
         {
             for (int i = 0; i < networkManager.allPlayers.Count; i++)
@@ -86,35 +101,27 @@ public class PlayerManager : MonoBehaviour {
                     networkManager.allPlayers[i].allyMarker.SetActive(true);
                 }
             }
+            
+            //else
+            //{
+                //updates all statuses on player if they exist
+                //for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
+                //{
+                //    StatusEffects status = statusEffectsOnPlayer[i];
+                //    status.Update();
+                //    if (status.Expired())
+                //    {
+                //        statusEffectsOnPlayer.RemoveAt(i);
+                //        i--;
+                //    }
+                //}
+            //}
         }
 
         healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
         if (DataGod.isServer)
         {
             healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
-        }
-
-        if (health <= 0)
-        {
-            respawnTimer.Update();
-            if (respawnTimer.HasCompleted())
-            {
-                Respawn();
-            }
-        }
-        else
-        {
-            //updates all statuses on player if they exist
-            //for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
-            //{
-            //    StatusEffects status = statusEffectsOnPlayer[i];
-            //    status.Update();
-            //    if (status.Expired())
-            //    {
-            //        statusEffectsOnPlayer.RemoveAt(i);
-            //        i--;
-            //    }
-            //}
         }
     }
     /// <summary>
@@ -177,7 +184,8 @@ public class PlayerManager : MonoBehaviour {
         {
             if (health > 0)
             {
-                networkView.RPC("RPCTakeDamage", RPCMode.All, damage, source, (showHealthPentagon) ? 1 : 0);
+                health -= damage;
+                networkView.RPC("RPCTakeDamage", RPCMode.All, damage, health, source, (showHealthPentagon) ? 1 : 0);
                 //if (statusEffect != null)
                 //{
                 //    statusEffect.playerScript = this;
@@ -189,19 +197,15 @@ public class PlayerManager : MonoBehaviour {
     }
 
     [RPC]
-    public void RPCTakeDamage(int damage, int source, int showHealthPentagon)
+    public void RPCTakeDamage(int damage, int newHealth, int source, int showHealthPentagon)
     {
-        Debug.Log("Damage Recieved");
-        health -= damage;
-        if (showHealthPentagon != 0 & (!networkView.isMine | DataGod.isServer))
-        {
-            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
-        }
+        health = newHealth;
 
         if (health <= 0)
         {
             health = 0;
             killer = source;
+            transform.position = GameObject.Find("DeathSpawn").transform.position;
             if (networkView.isMine)
             {
                 gameObject.GetComponent<HUD>().showDeathInfo = true;
@@ -212,6 +216,10 @@ public class PlayerManager : MonoBehaviour {
                 networkView.RPC("RPCAddDeath", RPCMode.AllBuffered);
                 scoreKeeper.networkView.RPC("RPCAddKill", RPCMode.AllBuffered, networkManager.allPlayers[killer].teamNumber);
             }
+        }
+        if (showHealthPentagon != 0 & (!networkView.isMine))
+        {
+            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
         }
     }
 
@@ -229,10 +237,20 @@ public class PlayerManager : MonoBehaviour {
 
     private void Respawn()
     {
-        transform.position = spawnPosition;
-        health = maxHealth;
-        gameObject.GetComponent<HUD>().showDeathInfo = false;
+        networkView.RPC("RPCRespawn", RPCMode.All);
     }
+
+    [RPC]
+    public void RPCRespawn()
+    {
+        if (networkView.isMine)
+        {
+            gameObject.GetComponent<HUD>().showDeathInfo = false;
+        }
+        health = maxHealth;
+        transform.position = spawnPosition;
+    }
+
     /// <summary>
     /// Returns the player's health as a number between 0 and 1
     /// </summary>
