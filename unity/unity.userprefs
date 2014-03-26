@@ -1,12 +1,6 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\..\..\Desktop\Alpha Game\unity\Assets\scripts\WeaponSelectScripts\WeaponSelectGUI.cs">
-    <Files>
-      <File FileName="..\..\..\Desktop\Alpha Game\unity\Assets\scripts\WeaponSelectScripts\WeaponSelectGUI.cs" Line="21" Column="54" />
-      <File FileName="..\..\..\Desktop\Alpha Game\unity\Assets\WeaponObject.cs" Line="21" Column="4" />
-      <File FileName="..\..\..\Desktop\Alpha Game\unity\Assets\WeaponDisplayScript.cs" Line="43" Column="24" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
