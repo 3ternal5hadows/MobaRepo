@@ -16,7 +16,18 @@ public class SkillTreeManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        DataGod.talentPoints = DataGod.MAXTALENTPOINTS;
+        GameObject[] allNodes = GameObject.FindGameObjectsWithTag("Node");
+        int i = 0;
+        foreach (GameObject obj in allNodes)
+        {
+            if (!obj.GetComponent<Node>().isStartingNode)
+            {
+                obj.GetComponent<Node>().ID = i;
+                obj.GetComponent<Node>().NodeLevel = WeaponData.treeData[WeaponData.currentTree, i];
+                i++;
+            }
+        }
     }
 
     // Update is called once per frame

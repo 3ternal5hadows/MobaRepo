@@ -106,6 +106,10 @@ public class ChatManager : MonoBehaviour {
                 {
                     chatStyle.normal.textColor = Color.red;
                 }
+                else if ((chatMessages[i].Remove(1)) == "<")
+                {
+                    chatStyle.normal.textColor = Color.yellow;
+                }
             }
             GUI.Label(new Rect(chatTextFieldRect.xMin, chatTextFieldRect.yMin + 25 * i - 25 * chatMessages.Count, chatTextFieldRect.width, chatTextFieldRect.height), chatMessages[i], chatStyle);
             chatStyle.normal.textColor = tempColor;

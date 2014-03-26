@@ -2,21 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerManager : MonoBehaviour {
+public class PlayerManager : MonoBehaviour
+{
 
-	int status;
+    int status;
 
     public GameObject healthPentagon;
 
-	public Vector3 spawnPosition;
+    public Vector3 spawnPosition;
     private Timer respawnTimer;
-	
+
     //Hey Nic, I made some changes :D
-	// Player Attribute variables
+    // Player Attribute variables
     private int health;
     private int maxHealth;
-	private float dodgeCoolDown;
-	public List<Weapon> toolBelt;
+    private float dodgeCoolDown;
+    public Weapon leftWeapon;
+    public Weapon rightWeapon;
+    public Weapon unequippedWeapon;
     public int teamNumber;
     //Kill/Death
     public int kills;
@@ -27,7 +30,7 @@ public class PlayerManager : MonoBehaviour {
     private NetworkManager networkManager;
     public string name;
 
-	public List<StatusEffects> statusEffectsOnPlayer;
+    public List<StatusEffects> statusEffectsOnPlayer;
 
     public int playerNumber;
 
@@ -46,6 +49,23 @@ public class PlayerManager : MonoBehaviour {
         if (networkView.isMine)
         {
             networkView.RPC("SetPlayerNumber", RPCMode.AllBuffered, playerNumber, teamNumber);
+            WeaponContainer[] containers = gameObject.GetComponentsInChildren<WeaponContainer>();
+            for (int i = 0; i < containers.Length; i++)
+            {
+                if (containers[i].name == "Left")
+                {
+                    leftWeapon = containers[0].InstantiateWeapon(WeaponData.LEFTHANDWEAPON);
+                }
+                else if (containers[i].name == "Right")
+                {
+                    rightWeapon = containers[i].InstantiateWeapon(WeaponData.RIGHTHANDWEAPON);
+                }
+                else
+                {
+                    unequippedWeapon = containers[i].InstantiateWeapon(WeaponData.UNEQUIPPEDWEAPON);
+                }
+            }
+            networkView.RPC("SetWeapons", RPCMode.AllBuffered, leftWeapon.networkView.viewID, rightWeapon.networkView.viewID, unequippedWeapon.networkView.viewID);
         }
         if (DataGod.isServer)
         {
@@ -54,6 +74,7 @@ public class PlayerManager : MonoBehaviour {
             maxHealth = DataGod.PLAYER_MAX_HEALTH;
             health = maxHealth;
             name = DataGod.GetRandomName();
+            GameObject.Find("ChatManager").GetComponent<ChatManager>().networkView.RPC("SendChatMessage", RPCMode.AllBuffered, "<" + name + " has joined the game>");
             for (int i = 0; i < networkManager.allPlayers.Count; i++)
             {
                 networkManager.allPlayers[i].networkView.RPC("SendData", RPCMode.All, networkManager.allPlayers[i].name, networkManager.allPlayers[i].health, networkManager.allPlayers[i].maxHealth, networkManager.allPlayers[i].spawnPosition);
@@ -61,6 +82,17 @@ public class PlayerManager : MonoBehaviour {
         }
 
         scoreKeeper = GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
+    }
+
+    [RPC]
+    public void SetWeapons(NetworkViewID left, NetworkViewID right, NetworkViewID back)
+    {
+        leftWeapon = NetworkView.Find(left).gameObject.GetComponent<Weapon>();
+        rightWeapon = NetworkView.Find(right).gameObject.GetComponent<Weapon>();
+        unequippedWeapon = NetworkView.Find(back).gameObject.GetComponent<Weapon>();
+        leftWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
+        rightWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
+        unequippedWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
     }
 
     [RPC]
@@ -76,9 +108,22 @@ public class PlayerManager : MonoBehaviour {
             chat.playerName = name;
             chat.player = this;
         }
+
+        if (leftWeapon != null)
+        {
+            leftWeapon.Equipped = true;
+        }
+        if (rightWeapon != null)
+        {
+            rightWeapon.Equipped = true;
+        }
+        if (unequippedWeapon != null)
+        {
+            unequippedWeapon.Equipped = false;
+        }
     }
-	
-	// Update is called once per frame
+
+    // Update is called once per frame
     void Update()
     {
         if (DataGod.isServer)
@@ -94,31 +139,28 @@ public class PlayerManager : MonoBehaviour {
         }
         if (networkView.isMine)
         {
-            for (int i = 0; i < networkManager.allPlayers.Count; i++)
+            SetAllyMarker();
+            if (Input.GetMouseButtonDown(0))
             {
-                if (networkManager.allPlayers[i].teamNumber != teamNumber)
-                {
-                    networkManager.allPlayers[i].allyMarker.SetActive(false);
-                }
-                else
-                {
-                    networkManager.allPlayers[i].allyMarker.SetActive(true);
-                }
+                leftWeapon.Attack();
             }
-            
+            if (Input.GetMouseButtonDown(1))
+            {
+                rightWeapon.Attack();
+            }
             //else
             //{
-                //updates all statuses on player if they exist
-                //for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
-                //{
-                //    StatusEffects status = statusEffectsOnPlayer[i];
-                //    status.Update();
-                //    if (status.Expired())
-                //    {
-                //        statusEffectsOnPlayer.RemoveAt(i);
-                //        i--;
-                //    }
-                //}
+            //updates all statuses on player if they exist
+            //for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
+            //{
+            //    StatusEffects status = statusEffectsOnPlayer[i];
+            //    status.Update();
+            //    if (status.Expired())
+            //    {
+            //        statusEffectsOnPlayer.RemoveAt(i);
+            //        i--;
+            //    }
+            //}
             //}
         }
 
@@ -159,15 +201,15 @@ public class PlayerManager : MonoBehaviour {
         }
         return 1 + slowPercentage;
     }
-	public void Attack()
-	{
-		//if left hand
-		//if right hand
-	}
-	public void loadWeapon()
-	{
-		//loads weapon of type into empty weapon slot
-	}
+    public void Attack()
+    {
+        //if left hand
+        //if right hand
+    }
+    public void loadWeapon()
+    {
+        //loads weapon of type into empty weapon slot
+    }
 
     /// <summary>
     /// Removes damage from player's health
@@ -269,7 +311,23 @@ public class PlayerManager : MonoBehaviour {
     {
         playerNumber = number;
         this.teamNumber = teamNumber;
-        gameObject.GetComponentInChildren<ProjectileLauncher>().source = playerNumber;
-        gameObject.GetComponentInChildren<DamageObject>().source = playerNumber;
+    }
+
+    private void SetAllyMarker()
+    {
+        if (allyMarker != null)
+        {
+            for (int i = 0; i < networkManager.allPlayers.Count; i++)
+            {
+                if (networkManager.allPlayers[i].teamNumber != teamNumber)
+                {
+                    networkManager.allPlayers[i].allyMarker.SetActive(false);
+                }
+                else
+                {
+                    networkManager.allPlayers[i].allyMarker.SetActive(true);
+                }
+            }
+        }
     }
 }

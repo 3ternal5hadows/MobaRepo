@@ -126,7 +126,6 @@ public class BlindEffect : StatusEffects {
     }
 }
 public class ShockEffect : DamagingStatusEffect {
-	float duration;
 	public ShockEffect(float _duration) : base(_duration)
 	{
 		dps = 3;
