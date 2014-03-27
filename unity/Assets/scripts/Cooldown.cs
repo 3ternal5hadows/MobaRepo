@@ -1,9 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Cooldown {
+public class Cooldown
+{
     private Timer cooldownTimer;
     private bool isOnCooldown;
+    public bool IsOnCooldown
+    {
+        get { return isOnCooldown; }
+    }
+    public bool IsOffCooldown
+    {
+        get { return !IsOnCooldown; }
+    }
 
     public Cooldown(float cooldownTime)
     {
@@ -23,7 +32,8 @@ public class Cooldown {
         }
     }
 
-    public void GoOnCooldown() {
+    public void GoOnCooldown()
+    {
         isOnCooldown = true;
     }
 

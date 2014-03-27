@@ -3,37 +3,89 @@ using System.Collections;
 
 public class Weapon : MonoBehaviour
 {
-    //skillTree Effects on all weapons
-
-    public float atkSpd;
-    public float pwrAtkActivateSpd;
-    public float pwrtAtkCoolDown;
-    public float pwrAtkDmg;
-    public float nrmAtkDmg;
-    public float critDmgBns;
-    public float specEffectivePrcnt;
-    public float procChnce;
-
     public StatusEffectInfo element;
+    public int ID;
+    private bool equipped;
+    public bool Equipped
+    {
+        get { return equipped; }
+        set
+        {
+            equipped = value;
+            if (renderer == null)
+            {
+                renderer = gameObject.GetComponent<MeshRenderer>();
+            }
+            renderer.enabled = equipped;
+        }
+    }
+    private MeshRenderer renderer;
+    public Cooldown normalCooldown;
+    public Cooldown powerCooldown;
+    public Sprite icon;
+    public PlayerManager player;
 
     protected void Start()
     {
-
+        WeaponStart();
     }
 
     protected void Update()
     {
+        WeaponUpdate();
+    }
+
+    protected virtual void WeaponStart()
+    {
+        if (networkView.isMine)
+        {
+            networkView.RPC("RPCEquipped", RPCMode.All, equipped);
+        }
+    }
+    protected virtual void WeaponUpdate() { }
+
+    public virtual void Attack()
+    {
+        networkView.RPC("ServerAttack", RPCMode.Server);
+        normalCooldown.GoOnCooldown();
+    }
+
+    [RPC]
+    public void ServerAttack()
+    {
+        gameObject.GetComponent<DamageObject>().ResetAttack();
+    }
+
+    public virtual void PowerAttack()
+    {
+        powerCooldown.GoOnCooldown();
+    }
+
+    [RPC]
+    public void RPCEquipped(bool equipped)
+    {
+        Equipped = equipped;
+    }
+    [RPC]
+    public void SetParent(NetworkViewID viewId)
+    {
+        transform.parent = NetworkView.Find(viewId).transform;
+    }
+
+    protected float GetModifier(int percentPerPoint, int nodeID)
+    {
+        return 1 + (percentPerPoint * WeaponData.treeData[ID, nodeID]) / 100.0f;
     }
 
     public StatusEffects GetStatusEffect()
     {
-        if (Random.Range(0, 100) / 100.0f <= element.chanceToApply)
+        if (element != null)
         {
-            return element.statusEffect.GetNewEffect();
+            if (Random.Range(0, 100) / 100.0f <= element.chanceToApply)
+            {
+                return element.statusEffect.GetNewEffect();
+            }
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 }

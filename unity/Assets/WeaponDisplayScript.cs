@@ -68,7 +68,7 @@ public class WeaponDisplayScript : MonoBehaviour {
 			}
 
 		}
-		Debug.Log("CW - currentWeapon:"+currentWeapon);
+		//Debug.Log("CW - currentWeapon:"+currentWeapon);
 
 	}
 	public void RotateCCW()
@@ -92,6 +92,6 @@ public class WeaponDisplayScript : MonoBehaviour {
 			}
 
 		}
-		Debug.Log("CCW - currentWeapon:"+currentWeapon);
+		//Debug.Log("CCW - currentWeapon:"+currentWeapon);
 	}
 }

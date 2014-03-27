@@ -1,107 +1,84 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class AttackAnimation : MonoBehaviour {
+public class AttackAnimation : MonoBehaviour
+{
+    public float WindowSize;
+    public List<string> animationNames;
 
-	public float Attack1CritWindow;
-	public float Attack2CritWindow;
-	public float Attack3CritWindow;
+    float timeElapsedSinceLastAttack = 0;
+    float timeElapsed = 0;
 
-	public float WindowSize;
+    float animationLength;
+    string nextAnimation;
+    string currentAnimation;
 
-	float timeElapsedSinceLastAttack=0;
-	float timeElapsed=0;
+    // Use this for initialization
+    void Start()
+    {
+        nextAnimation = "";
+        currentAnimation = "";
+    }
 
-	int counter = 0;
-	int combo =0;
-	bool animationPlay;
-	float animationLength;
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-		
-		if (counter != 0||combo>0) {
-			timeElapsedSinceLastAttack+= Time.deltaTime/2f;
-		}
+    // Update is called once per frame
+    void Update()
+    {
+        if (networkView.isMine)
+        {
+            if (!animation.isPlaying)
+            {
+                currentAnimation = "";
+                if (nextAnimation != "")
+                {
+                    currentAnimation = nextAnimation;
+                    nextAnimation = "";
+                    PlayNext();
+                }
+            }
+            else
+            {
+                timeElapsedSinceLastAttack += Time.deltaTime;
+            }
+        }
+    }
 
-		if (Input.GetKeyDown (KeyCode.Mouse1) && counter == 0) {
+    private void PlayNext()
+    {
+        timeElapsedSinceLastAttack = 0;
+        animation.Play(currentAnimation);
+    }
 
-			animationLength = animation["newSword1"].length;
+    private string Anim(PlayerManager player)
+    {
+        return animationNames[(player.ComboCount % animation.GetClipCount())];
+    }
 
-			if(combo>0)
-			{
-				if(timeElapsedSinceLastAttack > (animationLength * Attack1CritWindow)-WindowSize 
-				   && timeElapsedSinceLastAttack < (animationLength * Attack1CritWindow)+WindowSize)
-				{
-					combo++;
-					Debug.Log("AttackCrit Combo "+combo);
-					animation.PlayQueued("newSword1");
-					counter++;
-
-				}else 
-				{
-					combo =0;
-					counter=0;
-				}
-
-
-				timeElapsedSinceLastAttack=0;
-			}else 
-			{
-				animation.PlayQueued("newSword1");
-				counter++;
-				timeElapsedSinceLastAttack=0;
-			}
-			
-		}
-		else if (Input.GetKeyDown (KeyCode.Mouse1) && counter == 1) {
-
-			animationLength = animation["newSword2"].length;
-
-			if(timeElapsedSinceLastAttack > (animationLength * Attack2CritWindow)-WindowSize 
-			   && timeElapsedSinceLastAttack < (animationLength * Attack2CritWindow)+WindowSize)
-			{
-				combo++;
-				Debug.Log("AttackCrit Combo "+combo);
-
-				animation.PlayQueued("newSword2");
-				timeElapsedSinceLastAttack=0;
-				counter++;
-			}else
-			{
-				combo =0;
-				counter =0;
-			}
-		
-
-		}
-		else if (Input.GetKeyDown (KeyCode.Mouse1) && counter == 2) {
-
-			animationLength = animation["newSword3"].length;
-
-			if(timeElapsedSinceLastAttack > (animationLength * Attack3CritWindow)-WindowSize 
-			   && timeElapsedSinceLastAttack < (animationLength * Attack3CritWindow)+WindowSize)
-			{
-				animation.PlayQueued("newSword3");
-				combo++;
-				Debug.Log("AttackCrit Combo "+combo);
-
-				timeElapsedSinceLastAttack=0;
-				counter = 0;
-			}else
-			{
-				combo =0;
-				counter =0;
-			}
-		
-
-
-		}
-	
-	}
+    public void Attack(PlayerManager player)
+    {
+        if (animation.isPlaying)
+        {
+            animationLength = animation[currentAnimation].length;
+            //if (timeElapsedSinceLastAttack > (animationLength * attackCritWindows[animIndex]) - WindowSize
+            //   && timeElapsedSinceLastAttack < (animationLength * attackCritWindows[animIndex]) + WindowSize)
+            //{
+            if (timeElapsedSinceLastAttack > animationLength - WindowSize & timeElapsedSinceLastAttack < animationLength)
+            {
+                player.ComboCount++;
+                Debug.Log("AttackCrit Combo " + player.ComboCount);
+            }
+            else
+            {
+                player.ComboCount = 0;
+            }
+            nextAnimation = Anim(player);
+            timeElapsedSinceLastAttack = 0;
+        }
+        else
+        {
+            player.ComboCount = 0;
+            currentAnimation = Anim(player);
+            PlayNext();
+        }
+    }
 }

@@ -14,17 +14,6 @@ public class Spell : Weapon
 
     public bool didItCrit()
     {
-        return procChnce >= Random.Range(0.0f, 100.0f);
-    }
-
-    void Start()
-    {
-        base.Start();
-        normalCooldown = new Cooldown(normalCooldownTime);
-    }
-
-    void Update()
-    {
-        base.Update();
+        return false;//procChnce >= Random.Range(0.0f, 100.0f);
     }
 }

@@ -32,6 +32,10 @@ public class Node : MonoBehaviour {
                     DataGod.talentPoints -= difference;
                 }
             }
+            if (!isStartingNode)
+            {
+                WeaponData.treeData[WeaponData.currentTree, ID] = nodeLevel;
+            }
             SetText();
         }
     }
@@ -51,6 +55,7 @@ public class Node : MonoBehaviour {
     private Timer connectionParticleTimer;
     private float unlockedEffectAlpha;
     private bool unlockedEffectEnabled;
+    public int ID;
 
     private const float NODE_COLLISION_RADIUS = 0.25f;
 
@@ -78,8 +83,6 @@ public class Node : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        NodeLevel = 0;
-        SetText();
         input = GameObject.Find("SkillTreeManager").GetComponent<SkillTreeManager>();
         lockedSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         unlockedEffect = transform.FindChild("UnlockedNodeEffect");

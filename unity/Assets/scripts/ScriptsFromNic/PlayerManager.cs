@@ -2,21 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerManager : MonoBehaviour {
+public class PlayerManager : MonoBehaviour
+{
 
-	int status;
+    int status;
 
     public GameObject healthPentagon;
 
-	private Vector3 spawnPosition;
+    public Vector3 spawnPosition;
     private Timer respawnTimer;
-	
-    //Hey Nic, I made some changes :D
-	// Player Attribute variables
+
+    // Player Attribute variables
     private int health;
     private int maxHealth;
-	private float dodgeCoolDown;
-	public List<Weapon> toolBelt;
+    private float dodgeCoolDown;
+    public Weapon leftWeapon;
+    public Weapon rightWeapon;
+    public Weapon unequippedWeapon;
     public int teamNumber;
     //Kill/Death
     public int kills;
@@ -26,8 +28,22 @@ public class PlayerManager : MonoBehaviour {
     private ScoreKeeper scoreKeeper;
     private NetworkManager networkManager;
     public string name;
+    private int comboCount;
+    public int ComboCount
+    {
+        get { return comboCount; }
+        set
+        {
+            comboCount = value;
+            if (comboCount > 10)
+            {
+                comboCount = 10;
+            }
+            networkView.RPC("SetCombo", RPCMode.Server, comboCount);
+        }
+    }
 
-	public List<StatusEffects> statusEffectsOnPlayer;
+    public List<StatusEffects> statusEffectsOnPlayer;
 
     public int playerNumber;
 
@@ -42,68 +58,123 @@ public class PlayerManager : MonoBehaviour {
 
         statusEffectsOnPlayer = new List<StatusEffects>();
         healthPentagon = (GameObject)Instantiate(healthPentagon, transform.position, Quaternion.identity);
-        spawnPosition = transform.position;
-        respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
 
+        if (networkView.isMine)
+        {
+            comboCount = 0;
+            networkView.RPC("SetPlayerNumber", RPCMode.AllBuffered, playerNumber, teamNumber);
+            WeaponContainer[] containers = gameObject.GetComponentsInChildren<WeaponContainer>();
+            for (int i = 0; i < containers.Length; i++)
+            {
+                if (containers[i].name == "Left")
+                {
+                    leftWeapon = containers[0].InstantiateWeapon(WeaponData.LEFTHANDWEAPON);
+                }
+                else if (containers[i].name == "Right")
+                {
+                    rightWeapon = containers[i].InstantiateWeapon(WeaponData.RIGHTHANDWEAPON);
+                }
+                else
+                {
+                    unequippedWeapon = containers[i].InstantiateWeapon(WeaponData.UNEQUIPPEDWEAPON);
+                }
+            }
+            networkView.RPC("SetWeapons", RPCMode.AllBuffered, leftWeapon.networkView.viewID, rightWeapon.networkView.viewID, unequippedWeapon.networkView.viewID);
+        }
         if (DataGod.isServer)
         {
+            comboCount = 0;
+            spawnPosition = transform.position;
+            respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
             maxHealth = DataGod.PLAYER_MAX_HEALTH;
             health = maxHealth;
             name = DataGod.GetRandomName();
-            networkView.RPC("SendData", RPCMode.AllBuffered, name, health, maxHealth);
+            GameObject.Find("ChatManager").GetComponent<ChatManager>().networkView.RPC("SendChatMessage", RPCMode.AllBuffered, "<" + name + " has joined the game>");
+            for (int i = 0; i < networkManager.allPlayers.Count; i++)
+            {
+                networkManager.allPlayers[i].networkView.RPC("SendData", RPCMode.All, networkManager.allPlayers[i].name, networkManager.allPlayers[i].health, networkManager.allPlayers[i].maxHealth, networkManager.allPlayers[i].spawnPosition);
+            }
         }
 
         scoreKeeper = GameObject.Find("ScoreKeeper").GetComponent<ScoreKeeper>();
     }
 
     [RPC]
-    public void SendData(string name, int health, int maxHealth)
+    public void SetCombo(int count)
+    {
+        comboCount = count;
+        //GameObject.Find("ChatManager").networkView.RPC("SendChatMessage", RPCMode.AllBuffered, "<" + name + " " + comboCount + "x combo!>");
+    }
+
+    [RPC]
+    public void SetWeapons(NetworkViewID left, NetworkViewID right, NetworkViewID back)
+    {
+        leftWeapon = NetworkView.Find(left).gameObject.GetComponent<Weapon>();
+        rightWeapon = NetworkView.Find(right).gameObject.GetComponent<Weapon>();
+        unequippedWeapon = NetworkView.Find(back).gameObject.GetComponent<Weapon>();
+        leftWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
+        rightWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
+        unequippedWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
+        leftWeapon.player = this;
+        rightWeapon.player = this;
+        unequippedWeapon.player = this;
+    }
+
+    [RPC]
+    public void SendData(string name, int health, int maxHealth, Vector3 spawnPosition)
     {
         this.name = name;
         this.health = health;
         this.maxHealth = maxHealth;
+        this.spawnPosition = spawnPosition;
         if (networkView.isMine)
         {
             ChatManager chat = GameObject.Find("ChatManager").GetComponent<ChatManager>();
             chat.playerName = name;
             chat.player = this;
         }
+
+        if (leftWeapon != null)
+        {
+            leftWeapon.Equipped = true;
+        }
+        if (rightWeapon != null)
+        {
+            rightWeapon.Equipped = true;
+        }
+        if (unequippedWeapon != null)
+        {
+            unequippedWeapon.Equipped = false;
+        }
     }
-	
-	// Update is called once per frame
+
+    // Update is called once per frame
     void Update()
     {
-        if (networkView.isMine)
-        {
-            for (int i = 0; i < networkManager.allPlayers.Count; i++)
-            {
-                if (networkManager.allPlayers[i].teamNumber != teamNumber)
-                {
-                    networkManager.allPlayers[i].allyMarker.SetActive(false);
-                }
-                else
-                {
-                    networkManager.allPlayers[i].allyMarker.SetActive(true);
-                }
-            }
-        }
-
-        healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
         if (DataGod.isServer)
         {
-            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
-        }
-
-        if (health <= 0)
-        {
-            respawnTimer.Update();
-            if (respawnTimer.HasCompleted())
+            if (health <= 0)
             {
-                Respawn();
+                respawnTimer.Update();
+                if (respawnTimer.HasCompleted())
+                {
+                    Respawn();
+                }
             }
         }
-        else
+        if (networkView.isMine)
         {
+            SetAllyMarker();
+            if (Input.GetMouseButtonDown(0))
+            {
+                leftWeapon.Attack();
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                rightWeapon.Attack();
+            }
+            //else
+            //{
             //updates all statuses on player if they exist
             //for (int i = 0; i < statusEffectsOnPlayer.Count; i++)
             //{
@@ -115,6 +186,13 @@ public class PlayerManager : MonoBehaviour {
             //        i--;
             //    }
             //}
+            //}
+        }
+
+        healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
+        if (DataGod.isServer)
+        {
+            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
         }
     }
     /// <summary>
@@ -148,15 +226,15 @@ public class PlayerManager : MonoBehaviour {
         }
         return 1 + slowPercentage;
     }
-	public void Attack()
-	{
-		//if left hand
-		//if right hand
-	}
-	public void loadWeapon()
-	{
-		//loads weapon of type into empty weapon slot
-	}
+    public void Attack()
+    {
+        //if left hand
+        //if right hand
+    }
+    public void loadWeapon()
+    {
+        //loads weapon of type into empty weapon slot
+    }
 
     /// <summary>
     /// Removes damage from player's health
@@ -177,7 +255,9 @@ public class PlayerManager : MonoBehaviour {
         {
             if (health > 0)
             {
-                networkView.RPC("RPCTakeDamage", RPCMode.All, damage, source, (showHealthPentagon) ? 1 : 0);
+                //GameObject.Find("ChatManager").networkView.RPC("SendChatMessage", RPCMode.AllBuffered, "<" + name + " hits " + damage + "!>");
+                health -= damage;
+                networkView.RPC("RPCTakeDamage", RPCMode.All, damage, health, source, (showHealthPentagon) ? 1 : 0);
                 //if (statusEffect != null)
                 //{
                 //    statusEffect.playerScript = this;
@@ -189,19 +269,15 @@ public class PlayerManager : MonoBehaviour {
     }
 
     [RPC]
-    public void RPCTakeDamage(int damage, int source, int showHealthPentagon)
+    public void RPCTakeDamage(int damage, int newHealth, int source, int showHealthPentagon)
     {
-        Debug.Log("Damage Recieved");
-        health -= damage;
-        if (showHealthPentagon != 0 & (!networkView.isMine | DataGod.isServer))
-        {
-            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
-        }
+        health = newHealth;
 
         if (health <= 0)
         {
             health = 0;
             killer = source;
+            transform.position = GameObject.Find("DeathSpawn").transform.position;
             if (networkView.isMine)
             {
                 gameObject.GetComponent<HUD>().showDeathInfo = true;
@@ -212,6 +288,10 @@ public class PlayerManager : MonoBehaviour {
                 networkView.RPC("RPCAddDeath", RPCMode.AllBuffered);
                 scoreKeeper.networkView.RPC("RPCAddKill", RPCMode.AllBuffered, networkManager.allPlayers[killer].teamNumber);
             }
+        }
+        if (showHealthPentagon != 0 & (!networkView.isMine))
+        {
+            healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
         }
     }
 
@@ -229,10 +309,20 @@ public class PlayerManager : MonoBehaviour {
 
     private void Respawn()
     {
-        transform.position = spawnPosition;
-        health = maxHealth;
-        gameObject.GetComponent<HUD>().showDeathInfo = false;
+        networkView.RPC("RPCRespawn", RPCMode.All);
     }
+
+    [RPC]
+    public void RPCRespawn()
+    {
+        if (networkView.isMine)
+        {
+            gameObject.GetComponent<HUD>().showDeathInfo = false;
+        }
+        health = maxHealth;
+        transform.position = spawnPosition;
+    }
+
     /// <summary>
     /// Returns the player's health as a number between 0 and 1
     /// </summary>
@@ -247,7 +337,23 @@ public class PlayerManager : MonoBehaviour {
     {
         playerNumber = number;
         this.teamNumber = teamNumber;
-        gameObject.GetComponentInChildren<ProjectileLauncher>().source = playerNumber;
-        gameObject.GetComponentInChildren<DamageObject>().source = playerNumber;
+    }
+
+    private void SetAllyMarker()
+    {
+        if (allyMarker != null)
+        {
+            for (int i = 0; i < networkManager.allPlayers.Count; i++)
+            {
+                if (networkManager.allPlayers[i].teamNumber != teamNumber)
+                {
+                    networkManager.allPlayers[i].allyMarker.SetActive(false);
+                }
+                else
+                {
+                    networkManager.allPlayers[i].allyMarker.SetActive(true);
+                }
+            }
+        }
     }
 }

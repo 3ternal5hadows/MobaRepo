@@ -3,18 +3,40 @@ using System.Collections;
 
 public class MeleeWeapon : Weapon
 {
-    public float critWindowRnge;
-    //public enum elemType { shadow, fire, ice, lightning };
-    //elemType element;
+    public float attackSpeedModifier;
+    public float criticalWindowModifier;
+    public float specialProcChanceModifier;
+    public float specialEffectivenessModifier;
+    public float comboDamageModifier;
+    public float normalDamageModifier;
+    public float powerAttackDamageModifier;
+    public float powerAttackCooldownModifier;
+    public float powerAttackCastTimeModifier;
+    public float statusEffectDamageModifier;
 
-    void Start()
+    protected override void WeaponStart()
     {
-        base.Start();
-        element = new StatusEffectInfo(new BurnEffect(100, 5), 0.1f);
+        base.WeaponStart();
+        attackSpeedModifier = GetModifier(4, 7);
+        criticalWindowModifier = GetModifier(7, 3);
+        specialProcChanceModifier = GetModifier(5, 8);
+        specialEffectivenessModifier = GetModifier(5, 1);
+        comboDamageModifier = GetModifier(1, 6);
+        normalDamageModifier = GetModifier(4, 4);
+        powerAttackDamageModifier = GetModifier(4, 9);
+        powerAttackCooldownModifier = GetModifier(6, 2);
+        powerAttackCastTimeModifier = GetModifier(10, 5);
+        statusEffectDamageModifier = GetModifier(4, 0);
     }
 
-    void Update()
+    protected override void WeaponUpdate()
     {
-        base.Update();
+        base.WeaponUpdate();
+    }
+
+    public override void Attack()
+    {
+        base.Attack();
+        gameObject.GetComponent<AttackAnimation>().Attack(player);
     }
 }

@@ -7,16 +7,6 @@ public class RangedWeapon : Weapon
     private Cooldown normalCooldown;
 
     public float chnceToNotConsumeCombo;
-    public enum elemType { shadow, fire, ice, lightning, poison };
-    elemType element;
-
-    void Start()
-    {
-        base.Start();
-    }
-
-    void Update()
-    {
-        base.Update();
-    }
+    //public enum elemType { shadow, fire, ice, lightning, poison };
+    //elemType element;
 }
