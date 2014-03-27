@@ -23,6 +23,7 @@ public class Weapon : MonoBehaviour
     public Cooldown normalCooldown;
     public Cooldown powerCooldown;
     public Sprite icon;
+    public PlayerManager player;
 
     protected void Start()
     {
@@ -45,9 +46,14 @@ public class Weapon : MonoBehaviour
 
     public virtual void Attack()
     {
-        gameObject.GetComponent<AttackAnimation>().Attack();
-        gameObject.GetComponent<DamageObject>().networkView.RPC("RPCAttack", RPCMode.Server);
+        networkView.RPC("ServerAttack", RPCMode.Server);
         normalCooldown.GoOnCooldown();
+    }
+
+    [RPC]
+    public void ServerAttack()
+    {
+        gameObject.GetComponent<DamageObject>().ResetAttack();
     }
 
     public virtual void PowerAttack()

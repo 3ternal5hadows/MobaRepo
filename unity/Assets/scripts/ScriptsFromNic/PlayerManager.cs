@@ -12,7 +12,6 @@ public class PlayerManager : MonoBehaviour
     public Vector3 spawnPosition;
     private Timer respawnTimer;
 
-    //Hey Nic, I made some changes :D
     // Player Attribute variables
     private int health;
     private int maxHealth;
@@ -29,6 +28,20 @@ public class PlayerManager : MonoBehaviour
     private ScoreKeeper scoreKeeper;
     private NetworkManager networkManager;
     public string name;
+    private int comboCount;
+    public int ComboCount
+    {
+        get { return comboCount; }
+        set
+        {
+            comboCount = value;
+            if (comboCount > 10)
+            {
+                comboCount = 10;
+            }
+            networkView.RPC("SetCombo", RPCMode.Server, comboCount);
+        }
+    }
 
     public List<StatusEffects> statusEffectsOnPlayer;
 
@@ -48,6 +61,7 @@ public class PlayerManager : MonoBehaviour
 
         if (networkView.isMine)
         {
+            comboCount = 0;
             networkView.RPC("SetPlayerNumber", RPCMode.AllBuffered, playerNumber, teamNumber);
             WeaponContainer[] containers = gameObject.GetComponentsInChildren<WeaponContainer>();
             for (int i = 0; i < containers.Length; i++)
@@ -69,6 +83,7 @@ public class PlayerManager : MonoBehaviour
         }
         if (DataGod.isServer)
         {
+            comboCount = 0;
             spawnPosition = transform.position;
             respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
             maxHealth = DataGod.PLAYER_MAX_HEALTH;
@@ -85,6 +100,13 @@ public class PlayerManager : MonoBehaviour
     }
 
     [RPC]
+    public void SetCombo(int count)
+    {
+        comboCount = count;
+        //GameObject.Find("ChatManager").networkView.RPC("SendChatMessage", RPCMode.AllBuffered, "<" + name + " " + comboCount + "x combo!>");
+    }
+
+    [RPC]
     public void SetWeapons(NetworkViewID left, NetworkViewID right, NetworkViewID back)
     {
         leftWeapon = NetworkView.Find(left).gameObject.GetComponent<Weapon>();
@@ -93,6 +115,9 @@ public class PlayerManager : MonoBehaviour
         leftWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
         rightWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
         unequippedWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
+        leftWeapon.player = this;
+        rightWeapon.player = this;
+        unequippedWeapon.player = this;
     }
 
     [RPC]
@@ -230,6 +255,7 @@ public class PlayerManager : MonoBehaviour
         {
             if (health > 0)
             {
+                //GameObject.Find("ChatManager").networkView.RPC("SendChatMessage", RPCMode.AllBuffered, "<" + name + " hits " + damage + "!>");
                 health -= damage;
                 networkView.RPC("RPCTakeDamage", RPCMode.All, damage, health, source, (showHealthPentagon) ? 1 : 0);
                 //if (statusEffect != null)

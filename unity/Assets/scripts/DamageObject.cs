@@ -28,8 +28,7 @@ public class DamageObject : MonoBehaviour
         }
     }
 
-    [RPC]
-    public void RPCAttack()
+    public void ResetAttack()
     {
         enemiesHit.Clear();
     }
@@ -65,7 +64,7 @@ public class DamageObject : MonoBehaviour
 
     protected virtual void PlayerHit(Collider hit, PlayerManager sourceObject)
     {
-        hit.gameObject.GetComponent<PlayerManager>().TakeDamage(damage, sourceObject.playerNumber, statusEffect);
+        hit.gameObject.GetComponent<PlayerManager>().TakeDamage((Random.Range(1, 11) <= sourceObject.ComboCount) ? (int)(damage * DataGod.CRIT_MULTIPLIER) : damage, sourceObject.playerNumber, statusEffect);
     }
 
     [RPC]

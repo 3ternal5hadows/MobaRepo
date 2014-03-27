@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DataGod {
+public class DataGod
+{
     public static bool isClient;
     public static bool isServer
     {
@@ -10,9 +11,12 @@ public class DataGod {
             return !isClient;
         }
     }
-	public static bool networkIsMine = false;
-	public enum GameMode{ Menu, Demo, NetWorkPlay};	
-	public static GameMode currentGameState;
+    public static bool networkIsMine = false;
+    public enum GameMode { Menu, Demo, NetWorkPlay };
+    public static GameMode currentGameState;
+
+    //Gameplay constants
+    public const float CRIT_MULTIPLIER = 2;
 
     //Talent tree variables
     public const int POINTS_REQUIRED_FOR_NEXT_NODE = 5;
@@ -37,7 +41,7 @@ public class DataGod {
 
     //Chat filter
     #region Not for the faint of heart
-    public static string[] wordsWeDontLike = new string[] { "tank", "t@nk", "artillery"};
+    public static string[] wordsWeDontLike = new string[] { "tank", "t@nk", "artillery" };
     #endregion
     private static string[] filterAlternateMessages = new string[] { "I like bunny rabbits", "This winter is too long",
     "I'm such a noob", "Look it's a spider", "Mmm, that tasted purple"};

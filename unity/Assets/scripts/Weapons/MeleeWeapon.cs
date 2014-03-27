@@ -33,4 +33,10 @@ public class MeleeWeapon : Weapon
     {
         base.WeaponUpdate();
     }
+
+    public override void Attack()
+    {
+        base.Attack();
+        gameObject.GetComponent<AttackAnimation>().Attack(player);
+    }
 }

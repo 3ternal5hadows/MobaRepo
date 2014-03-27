@@ -9,7 +9,6 @@ public class HUD : MonoBehaviour
 
     public List<Sprite> powerCooldownFrames;
     public List<Sprite> normalCooldownFrames;
-    public List<Sprite> weaponIcons;
     public List<Sprite> frames;
     public Sprite deathSkull;
     public bool showDeathInfo;
