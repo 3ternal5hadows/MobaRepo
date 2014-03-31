@@ -12,9 +12,8 @@ public class Sword : MeleeWeapon {
     {
         base.WeaponUpdate();
     }
-    public override void Attack()
+    public override void AttackDown()
     {
-        base.Attack();
-
+        base.AttackDown();
     }
 }

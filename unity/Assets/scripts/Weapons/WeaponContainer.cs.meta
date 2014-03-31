@@ -4,6 +4,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - sword: {fileID: 100000, guid: f38412faf96601340993927d0e0e8976, type: 2}
+  - projectileLauncher: {fileID: 100000, guid: ea09ff6d505b59d4896e249ece86783f, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

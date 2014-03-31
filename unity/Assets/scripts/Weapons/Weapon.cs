@@ -12,11 +12,14 @@ public class Weapon : MonoBehaviour
         set
         {
             equipped = value;
-            if (renderer == null)
+            if (gameObject.GetComponent<MeshRenderer>() != null)
             {
-                renderer = gameObject.GetComponent<MeshRenderer>();
+                if (renderer == null)
+                {
+                    renderer = gameObject.GetComponent<MeshRenderer>();
+                }
+                renderer.enabled = equipped;
             }
-            renderer.enabled = equipped;
         }
     }
     private MeshRenderer renderer;
@@ -44,10 +47,14 @@ public class Weapon : MonoBehaviour
     }
     protected virtual void WeaponUpdate() { }
 
-    public virtual void Attack()
+    public virtual void AttackDown()
     {
         networkView.RPC("ServerAttack", RPCMode.Server);
         normalCooldown.GoOnCooldown();
+    }
+
+    public virtual void AttackUp()
+    {
     }
 
     [RPC]
