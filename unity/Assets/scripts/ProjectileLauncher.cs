@@ -12,8 +12,9 @@ public class ProjectileLauncher : MonoBehaviour {
 
 	public float ReloadSpeed = 1;
 	public float ChargeRate = 0.1f;
-	public float predShurikenForce=0;
-	public float predShurikenSpin =0;
+	public float predShurikenForce= 0;
+	public float predShurikenSpin = 0;
+	public float shurikenSpin = 0;
 
 	GameObject chargingSpell;
 	float scale=0.1f;
