@@ -4,21 +4,24 @@ using System.Collections.Generic;
 
 public class WeaponContainer : MonoBehaviour {
     public GameObject sword;
-    public List<GameObject> allWeapons;
+    public GameObject projectileLauncher;
+    private List<GameObject> allWeapons;
     public string name;
 
 	// Use this for initialization
 	void Start () {
-        allWeapons = new List<GameObject>();
-        allWeapons.Add(sword);
 	}
 	// Update is called once per frame
 	void Update () {
 	}
 
-    public Weapon InstantiateWeapon(int ID)
+    public Weapon InstantiateWeapon(int weaponNum, int ID)
     {
-        GameObject weapon = (GameObject)Network.Instantiate(sword, transform.position, transform.rotation, 0);
+        allWeapons = new List<GameObject>();
+        allWeapons.Add(sword);
+        allWeapons.Add(projectileLauncher);
+
+        GameObject weapon = (GameObject)Network.Instantiate(allWeapons[weaponNum], transform.position, transform.rotation, 0);
         Weapon weaponScript = weapon.GetComponent<Weapon>();
         weaponScript.ID = ID;
         weaponScript.Equipped = (ID != WeaponData.UNEQUIPPEDWEAPON);

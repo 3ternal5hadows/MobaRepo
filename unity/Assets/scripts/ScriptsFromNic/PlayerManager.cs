@@ -68,15 +68,15 @@ public class PlayerManager : MonoBehaviour
             {
                 if (containers[i].name == "Left")
                 {
-                    leftWeapon = containers[0].InstantiateWeapon(WeaponData.LEFTHANDWEAPON);
+                    leftWeapon = containers[0].InstantiateWeapon(WeaponData.weapons[WeaponData.LEFTHANDWEAPON], WeaponData.LEFTHANDWEAPON);
                 }
                 else if (containers[i].name == "Right")
                 {
-                    rightWeapon = containers[i].InstantiateWeapon(WeaponData.RIGHTHANDWEAPON);
+                    rightWeapon = containers[i].InstantiateWeapon(WeaponData.weapons[WeaponData.RIGHTHANDWEAPON], WeaponData.RIGHTHANDWEAPON);
                 }
                 else
                 {
-                    unequippedWeapon = containers[i].InstantiateWeapon(WeaponData.UNEQUIPPEDWEAPON);
+                    unequippedWeapon = containers[i].InstantiateWeapon(WeaponData.weapons[WeaponData.UNEQUIPPEDWEAPON], WeaponData.UNEQUIPPEDWEAPON);
                 }
             }
             networkView.RPC("SetWeapons", RPCMode.AllBuffered, leftWeapon.networkView.viewID, rightWeapon.networkView.viewID, unequippedWeapon.networkView.viewID);
@@ -167,11 +167,19 @@ public class PlayerManager : MonoBehaviour
             SetAllyMarker();
             if (Input.GetMouseButtonDown(0))
             {
-                leftWeapon.Attack();
+                leftWeapon.AttackDown();
             }
             if (Input.GetMouseButtonDown(1))
             {
-                rightWeapon.Attack();
+                rightWeapon.AttackDown();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                leftWeapon.AttackUp();
+            }
+            if (Input.GetMouseButtonUp(1))
+            {
+                rightWeapon.AttackUp();
             }
             //else
             //{
