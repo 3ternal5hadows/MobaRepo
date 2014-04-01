@@ -21,6 +21,11 @@ public class WeaponContainer : MonoBehaviour {
         allWeapons.Add(sword);
         allWeapons.Add(projectileLauncher);
 
+        if (weaponNum >= allWeapons.Count)
+        {
+            weaponNum = allWeapons.Count - 1;
+        }
+
         GameObject weapon = (GameObject)Network.Instantiate(allWeapons[weaponNum], transform.position, transform.rotation, 0);
         Weapon weaponScript = weapon.GetComponent<Weapon>();
         weaponScript.ID = ID;
