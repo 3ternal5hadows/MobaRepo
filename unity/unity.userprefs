@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\WeaponSelectScripts\WeaponDiscScript.cs">
+    <Files>
+      <File FileName="Assets\scripts\WeaponSelectScripts\WeaponDiscScript.cs" Line="24" Column="26" />
+      <File FileName="Assets\scripts\WeaponSelectScripts\WeaponDisplayTitle.cs" Line="11" Column="52" />
+      <File FileName="Assets\scripts\Weapons\WeaponContainer.cs" Line="8" Column="40" />
+      <File FileName="Assets\scripts\Skill Tree\SkillTreeButton.cs" Line="21" Column="48" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

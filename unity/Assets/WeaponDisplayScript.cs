@@ -40,7 +40,9 @@ public class WeaponDisplayScript : MonoBehaviour {
 
 		if(GUI.Button (new Rect(displayPos.x+100, Screen.height+30 - displayPos.y, 125, 25),"Setup Talents"))
 		{
+			WeaponData.currentTree = DisplayNumber;
 			Application.LoadLevel("Skill Tree");
+
 
 		}
 
@@ -58,8 +60,10 @@ public class WeaponDisplayScript : MonoBehaviour {
 
 		if(Weapons != null)
 			currentSelectedWeapon = Weapons[0];
+		currentWeapon=0;
+		SetStartingPos(WeaponData.weapons[DisplayNumber]);
 
-		currentWeapon = 0;
+
 	
 	}
 	
@@ -103,6 +107,7 @@ public class WeaponDisplayScript : MonoBehaviour {
 			}
 
 		}
+		WeaponData.weapons[DisplayNumber] = currentWeapon;
 		//Debug.Log("CW - currentWeapon:"+currentWeapon);
 
 	}
@@ -145,6 +150,7 @@ public class WeaponDisplayScript : MonoBehaviour {
 			}
 
 		}
+		WeaponData.weapons[DisplayNumber] = currentWeapon;
 		//Debug.Log("CCW - currentWeapon:"+currentWeapon);
 	}
 }

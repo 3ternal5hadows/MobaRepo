@@ -43,10 +43,10 @@ public class SkillTreeManager : MonoBehaviour
             {
                 ResetNodes();
             }
-            GameObject mainMenuButton = GameObject.Find("MainMenuButtonBackground");
+            GameObject mainMenuButton = GameObject.Find("WeaponSelectButtonBackground");
             if (mainMenuButton.GetComponent<SkillTreeButton>().MouseHit(MouseWorldPosition))
             {
-                Application.LoadLevel("MainMenu");
+                Application.LoadLevel("WeaponSelect");
             }
         }
     }
