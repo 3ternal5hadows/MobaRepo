@@ -11,38 +11,26 @@ public class ButtonManager : MonoBehaviour {
 	}
 	public float DelayTime = 20;
 	bool loadingDemo = false;
-	bool loadingTalents = false;
+	bool loadingWeapons = false;
 	bool loadingGame = false;
 	
 	// Update is called once per frame
 	void Update () {
-		if(loadingTalents)
-		{
-			elapsedTime += Time.deltaTime;
-			if(elapsedTime>=DelayTime)
-			{
-				Application.LoadLevel("Skill Tree");
-			}
-			
-		}
+
+
 		if(loadingGame || loadingDemo)
 		{
 			elapsedTime += Time.deltaTime;
 			if(elapsedTime>=DelayTime)
 			{
-				Application.LoadLevel("level 1");
+				Application.LoadLevel("WeaponSelect");
 			}
-			
 		}
 
 	}
-	void FixedUpdate()
-	{
-		Debug.Log("elapsed time:" + elapsedTime);
-	}
 
     void OnGUI() {
-		if(!loadingDemo&&!loadingTalents&&!loadingGame)
+		if(!loadingDemo&&!loadingGame)
 		{
 	        if (GUI.Button(new Rect(100, 100, 250, 100), "Server")) {
 	            DataGod.isClient = false;
@@ -58,13 +46,6 @@ public class ButtonManager : MonoBehaviour {
 				DataGod.currentGameState = DataGod.GameMode.NetWorkPlay;
 
 	        }
-			if (GUI.Button(new Rect(400, 100, 250, 100), "TalentTree")) {
-				DataGod.isClient = false;
-				Camera.main.animation.Play();
-				DataGod.currentGameState = DataGod.GameMode.Menu;
-				loadingTalents = true;
-		
-			}
 			if (GUI.Button(new Rect(400, 250, 250, 100), "DEMO")) {
 				DataGod.isClient = false;
 				Camera.main.animation.Play();

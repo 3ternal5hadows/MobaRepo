@@ -15,7 +15,7 @@ public class AmbientLighting : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		this.light.intensity  = Mathf.Sin(Time.timeSinceLevelLoad / CycleTime) * MaxIntensity + MinIntensity;
+		this.light.intensity  = -1*Mathf.Sin(Time.timeSinceLevelLoad / CycleTime) * MaxIntensity + MinIntensity;
  	
 	}
 }
