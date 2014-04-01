@@ -1,13 +1,26 @@
 fileFormatVersion: 2
-guid: f16e57d22ee22fe4e9de5c70b0c129ee
+guid: 6c6d70ee2fa62f241b3f50e87cbf510d
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Cube
+    100000: Area
+    100002: Camera
+    100004: Empty
+    100006: //RootNode
+    100008: PommelandHilt
+    100010: SwordBladeandGuard
+    400000: Area
+    400002: Camera
+    400004: Empty
+    400006: //RootNode
+    400008: PommelandHilt
+    400010: SwordBladeandGuard
+    2300000: PommelandHilt
+    2300002: SwordBladeandGuard
+    3300000: PommelandHilt
+    3300002: SwordBladeandGuard
+    4300000: PommelandHilt
+    4300002: SwordBladeandGuard
     7400000: Default Take
     9500000: //RootNode
   materials:

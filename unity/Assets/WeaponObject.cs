@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WeaponObject : MonoBehaviour {
 
 	// Use this for initialization
+	public string Name;
 	public int StartingPosition;
 	public int currentPosition;
-	public GameObject slotedWeapon;
+	public List<GameObject> slotedWeapon;
 	public bool Active = false;
 	float elapsedTime=0;
 
@@ -19,14 +21,28 @@ public class WeaponObject : MonoBehaviour {
 		elapsedTime+= Time.deltaTime;
 		if(Active)
 		{
-			slotedWeapon.gameObject.renderer.material.color = new Color(Mathf.Lerp(0,1.0f,elapsedTime),
-			                                                            Mathf.Lerp(0,1.0f,elapsedTime),
-			                                                            Mathf.Lerp(0,1.0f,elapsedTime));
+			foreach(GameObject weapon in slotedWeapon)
+			{
+				if(weapon.renderer != null)
+					weapon.renderer.material.color = new Color(Mathf.Lerp(0,1.0f,elapsedTime),
+				                                                            Mathf.Lerp(0,1.0f,elapsedTime),
+				                                                            Mathf.Lerp(0,1.0f,elapsedTime));
+				else weapon.GetComponent<SpriteRenderer>().color = new Color(Mathf.Lerp(0,1.0f,elapsedTime),
+		                                                                           Mathf.Lerp(0,1.0f,elapsedTime),
+		                                                                           Mathf.Lerp(0,1.0f,elapsedTime));
+			}
 		}else 
 		{
-			slotedWeapon.gameObject.renderer.material.color = new Color(Mathf.Lerp(1.0f,0,elapsedTime),
-			                                                            Mathf.Lerp(1.0f,0,elapsedTime),
-			                                                            Mathf.Lerp(1.0f,0,elapsedTime));
+			foreach(GameObject weapon in slotedWeapon)
+			{
+				if(weapon.renderer != null)
+					weapon.renderer.material.color = new Color(Mathf.Lerp(1.0f,0,elapsedTime),
+				                                                            Mathf.Lerp(1.0f,0,elapsedTime),
+				                                                            Mathf.Lerp(1.0f,0,elapsedTime));
+				else weapon.GetComponent<SpriteRenderer>().color = new Color(Mathf.Lerp(0,1.0f,elapsedTime),
+				                                                                   Mathf.Lerp(0,1.0f,elapsedTime),
+				                                                                   Mathf.Lerp(0,1.0f,elapsedTime));
+			}
 		}
 
 	}
