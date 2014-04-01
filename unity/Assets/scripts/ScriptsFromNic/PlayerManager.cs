@@ -61,6 +61,8 @@ public class PlayerManager : MonoBehaviour
 
         if (networkView.isMine)
         {
+            name = DataGod.playerName;
+            networkView.RPC("SendName", RPCMode.AllBuffered, name);
             comboCount = 0;
             networkView.RPC("SetPlayerNumber", RPCMode.AllBuffered, playerNumber, teamNumber);
             WeaponContainer[] containers = gameObject.GetComponentsInChildren<WeaponContainer>();
@@ -88,11 +90,10 @@ public class PlayerManager : MonoBehaviour
             respawnTimer = new Timer(DataGod.PLAYER_RESPAWN_TIME);
             maxHealth = DataGod.PLAYER_MAX_HEALTH;
             health = maxHealth;
-            name = DataGod.GetRandomName();
             GameObject.Find("ChatManager").GetComponent<ChatManager>().networkView.RPC("SendChatMessage", RPCMode.AllBuffered, "<" + name + " has joined the game>");
             for (int i = 0; i < networkManager.allPlayers.Count; i++)
             {
-                networkManager.allPlayers[i].networkView.RPC("SendData", RPCMode.All, networkManager.allPlayers[i].name, networkManager.allPlayers[i].health, networkManager.allPlayers[i].maxHealth, networkManager.allPlayers[i].spawnPosition);
+                networkManager.allPlayers[i].networkView.RPC("SendData", RPCMode.All, networkManager.allPlayers[i].health, networkManager.allPlayers[i].maxHealth, networkManager.allPlayers[i].spawnPosition);
             }
         }
 
@@ -121,9 +122,14 @@ public class PlayerManager : MonoBehaviour
     }
 
     [RPC]
-    public void SendData(string name, int health, int maxHealth, Vector3 spawnPosition)
+    public void SendName(string name)
     {
         this.name = name;
+    }
+
+    [RPC]
+    public void SendData(int health, int maxHealth, Vector3 spawnPosition)
+    {
         this.health = health;
         this.maxHealth = maxHealth;
         this.spawnPosition = spawnPosition;
