@@ -5,11 +5,23 @@ public class ButtonManager : MonoBehaviour
 {
 
     // Use this for initialization
+	public Texture2D ButtonTexture;
     float elapsedTime = 0;
+	GUIStyle Style;
     void Start()
     {
         DataGod.currentGameState = DataGod.GameMode.Menu;
-
+		GUIStyleState state = new GUIStyleState();
+		state.background = ButtonTexture;
+		Style = new GUIStyle();
+		Style.border = new RectOffset(10,10,10,10);
+		Style.padding = new RectOffset(10,10,10,10);
+		Style.hover.background = ButtonTexture;
+		Style.fontSize = 30;
+		Style.fontStyle = FontStyle.Bold;
+		Style.alignment = TextAnchor.MiddleCenter;
+		Style.normal.background = ButtonTexture;
+			
     }
     public float DelayTime = 20;
     bool loadingDemo = false;
@@ -42,8 +54,10 @@ public class ButtonManager : MonoBehaviour
     void OnGUI()
     {
         if (!loadingDemo && !loadingGame)
-        {
-            if (GUI.Button(new Rect(100, 100, 250, 100), "Server"))
+        {	
+
+
+            if (GUI.Button(new Rect(Screen.width/2 - 125, 200, 200, 75), "Server",Style))
             {
                 DataGod.isClient = false;
                 Camera.main.animation.Play();
@@ -51,7 +65,7 @@ public class ButtonManager : MonoBehaviour
                 DataGod.currentGameState = DataGod.GameMode.NetWorkPlay;
 
             }
-            if (GUI.Button(new Rect(100, 250, 250, 100), "Client"))
+            if (GUI.Button(new Rect(Screen.width/2 -125, 350, 200, 75), "Client",Style))
             {
                 DataGod.isClient = true;
                 Camera.main.animation.Play();
@@ -59,13 +73,7 @@ public class ButtonManager : MonoBehaviour
                 DataGod.currentGameState = DataGod.GameMode.NetWorkPlay;
 
             }
-            if (GUI.Button(new Rect(400, 250, 250, 100), "DEMO"))
-            {
-                DataGod.isClient = false;
-                Camera.main.animation.Play();
-                DataGod.currentGameState = DataGod.GameMode.Demo;
-                loadingDemo = true;
-            }
+           
         }
         else GUI.enabled = false;
 
