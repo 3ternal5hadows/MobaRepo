@@ -22,7 +22,7 @@ public class DataGod
     public const int POINTS_REQUIRED_FOR_NEXT_NODE = 5;
     public const int MAXTALENTPOINTS = 50;
     public static int talentPoints;
-    public const int MAXIMUM_NODE_LEVEL = 5;
+    public const int MAXIMUM_NODE_LEVEL = 15;
     //Specific Talent tree variables
     //public static int[,] skillTreeData = new int[3, 10];
 
@@ -30,7 +30,7 @@ public class DataGod
     public const int PLAYER_MAX_HEALTH = 100000;
     public const int PLAYER_RESPAWN_TIME = 7;
     //Player variables
-    public static string playerName;
+    public static string playerName = "Default name";
 
     private static string[] defaultNames = new string[] { "Greg", "Nic", "Wes", "Brad", "Michael",
         "Andrew", "Bob", "Catherine", "Delilah", "Elizabeth", "Fred", "George", "Hubert", "Ingred", "Julia",
@@ -51,4 +51,24 @@ public class DataGod
     {
         return filterAlternateMessages[Random.Range(0, filterAlternateMessages.Length)];
     }
+
+    public static string[] treeToolTips = new string[]
+    {
+        "Element damage and duration\n+4% damage per point\n+4% duration per point",
+        "Weapon Effect",
+        "Weapon Effect",
+        "Leave this blank, fill in the one below",
+        "Weapon Effect",
+        "Weapon Effect",
+        "Weapon Effect",
+        "Weapon Effect",
+        "Weapon Effect",
+        "Weapon Effect"
+    };
+    public static string[] treeToolTipsID3 = new string[]
+    {
+        "Melee tree",
+        "Ranged tree",
+        "Magic tree"
+    };
 }
