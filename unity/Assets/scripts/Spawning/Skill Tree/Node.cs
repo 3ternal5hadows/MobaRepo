@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Node : MonoBehaviour {
+public class Node : MonoBehaviour
+{
     public List<GameObject> adjacentNodes;
     public bool isStartingNode;
     private int nodeLevel;
@@ -20,7 +21,7 @@ public class Node : MonoBehaviour {
                     if (DataGod.talentPoints >= difference)
                     {
                         nodeLevel += difference;
-                        DataGod.talentPoints-=difference;
+                        DataGod.talentPoints -= difference;
                     }
                 }
             }
@@ -56,6 +57,10 @@ public class Node : MonoBehaviour {
     private float unlockedEffectAlpha;
     private bool unlockedEffectEnabled;
     public int ID;
+    private GUIStyle tooltipStyle;
+    public Font font;
+    public Sprite tooltipOutline;
+    public Sprite tooltipBackground;
 
     private const float NODE_COLLISION_RADIUS = 0.25f;
 
@@ -81,12 +86,13 @@ public class Node : MonoBehaviour {
         get { return (NodeLevel >= DataGod.POINTS_REQUIRED_FOR_NEXT_NODE); }
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         input = GameObject.Find("SkillTreeManager").GetComponent<SkillTreeManager>();
         lockedSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         unlockedEffect = transform.FindChild("UnlockedNodeEffect");
-        unlockedEffect.Rotate(new Vector3(0, 0, 1), Random.Range(0,360));
+        unlockedEffect.Rotate(new Vector3(0, 0, 1), Random.Range(0, 360));
         unlockedEffectSpriteRenderer = unlockedEffect.GetComponent<SpriteRenderer>();
         connectionParticleTimer = new Timer(0.2f);
         if (isStartingNode)
@@ -101,9 +107,14 @@ public class Node : MonoBehaviour {
             unlockedEffectAlpha = 0;
         }
         SetUnlockedEffectColor();
-	}
-	// Update is called once per frame
-	void Update () {
+        tooltipStyle = new GUIStyle();
+        tooltipStyle.font = font;
+        tooltipStyle.fontSize = 20;
+        tooltipStyle.normal.textColor = Color.white;
+    }
+    // Update is called once per frame
+    void Update()
+    {
         mousePosition = input.MouseWorldPosition;
         position = new Vector2(transform.position.x, transform.position.y);
         mouseOver = MouseOver();
@@ -127,7 +138,40 @@ public class Node : MonoBehaviour {
             }
         }
         UpdateConnectionEffect();
-	}
+    }
+    void OnGUI()
+    {
+        if (mouseOver & !isStartingNode)
+        {
+            string tooltip;
+            if (ID == 3)
+            {
+                int weaponType = 0;//Need to implement this later
+                tooltip = DataGod.treeToolTipsID3[weaponType];
+            }
+            else
+            {
+                tooltip = DataGod.treeToolTips[ID];
+            }
+            Vector2 stringSize = tooltipStyle.CalcSize(new GUIContent(tooltip));
+            int margin = 4;
+            int lineWidth = 2;
+            int offset = 20;
+            Rect tooltipRect = new Rect(Input.mousePosition.x - margin - lineWidth + offset, Screen.height - Input.mousePosition.y - margin - lineWidth + offset, stringSize.x + margin * 2 + lineWidth * 2, stringSize.y + margin * 2 + lineWidth * 2);
+            if (tooltipRect.x + tooltipRect.width > Screen.width)
+            {
+                tooltipRect.x -= (tooltipRect.x + tooltipRect.width) - Screen.width;
+            }
+            if (tooltipRect.y + tooltipRect.height > Screen.height)
+            {
+                tooltipRect.y -= (tooltipRect.y + tooltipRect.height) - Screen.height;
+            }
+            GUI.DrawTexture(tooltipRect, tooltipOutline.texture);
+            GUI.DrawTexture(new Rect(tooltipRect.x + lineWidth, tooltipRect.y + lineWidth, tooltipRect.width - lineWidth * 2, tooltipRect.height - lineWidth * 2), tooltipBackground.texture);
+            GUI.Label(new Rect(tooltipRect.x + lineWidth + margin, tooltipRect.y + lineWidth + margin, tooltipRect.width - lineWidth * 2, tooltipRect.height - lineWidth * 2), tooltip, tooltipStyle);
+        }
+    }
+
     private void SetUnlockedEffectColor()
     {
         unlockedEffectSpriteRenderer.color = Color.white * unlockedEffectAlpha;
@@ -171,6 +215,10 @@ public class Node : MonoBehaviour {
         if (NodeLevel <= 0)
         {
             return false;
+        }
+        if (NodeLevel > DataGod.POINTS_REQUIRED_FOR_NEXT_NODE)
+        {
+            return true;
         }
         foreach (GameObject node in adjacentNodes)
         {
@@ -327,7 +375,8 @@ public class Node : MonoBehaviour {
     {
         gameObject.GetComponent<SpriteRenderer>().sprite = sprite;
     }
-    private bool LeftClicked() {
+    private bool LeftClicked()
+    {
         return (mouseOver & Input.GetMouseButtonDown(0));
     }
     private bool RightClicked()

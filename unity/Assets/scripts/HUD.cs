@@ -14,6 +14,7 @@ public class HUD : MonoBehaviour
     public bool showDeathInfo;
     public Sprite killsIcon;
     public Sprite deathsIcon;
+	public Sprite miniMap;
 
     public Font font;
     private GUIStyle nameStyle;
@@ -25,6 +26,7 @@ public class HUD : MonoBehaviour
     private Rect deathsIconRect;
     private Rect killCountRect;
     private Rect deathCountRect;
+	private Rect miniMapRect;
     private GUIStyle teamKillsStyle;
 
     private ScoreKeeper scoreKeeper;
@@ -57,6 +59,7 @@ public class HUD : MonoBehaviour
         deathsIconRect = new Rect(15, 130, 40, 40);
         killCountRect = new Rect(65, 85, 1, 1);
         deathCountRect = new Rect(65, 130, 1, 1);
+		miniMapRect = new Rect(Screen.width - 205, 5, 200, 200);
 
         teamKillsStyle = new GUIStyle();
         teamKillsStyle.font = font;
@@ -85,6 +88,7 @@ public class HUD : MonoBehaviour
             GUI.DrawTexture(healthBarRect, frames[frame].texture);
             GUI.DrawTexture(killsIconRect, killsIcon.texture);
             GUI.DrawTexture(deathsIconRect, deathsIcon.texture);
+			GUI.DrawTexture(miniMapRect, miniMap.texture);
             string str = player.kills + "";
             Vector2 size = killsAndDeathsStyle.CalcSize(new GUIContent(str));
             killCountRect.width = size.x;
