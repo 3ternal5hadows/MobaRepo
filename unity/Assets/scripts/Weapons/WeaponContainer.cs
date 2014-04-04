@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class WeaponContainer : MonoBehaviour {
     public GameObject sword;
     public GameObject projectileLauncher;
+	public GameObject hammer;
     private List<GameObject> allWeapons;
     public string name;
 
@@ -20,6 +21,7 @@ public class WeaponContainer : MonoBehaviour {
         allWeapons = new List<GameObject>();
         allWeapons.Add(sword);
         allWeapons.Add(projectileLauncher);
+		allWeapons.Add (hammer);
 
         if (weaponNum >= allWeapons.Count)
         {

@@ -147,9 +147,9 @@ public class HUD : MonoBehaviour
                 DrawWithGlow(new Rect(Screen.width / 2 - totalSize.x / 2 + skullSize.x, Screen.height / 2 - totalSize.y / 2 + 10,
                     skullSize.x, skullSize.y), killedByString, killedByStyle, Color.black, 5);
             }
-            GUI.DrawTexture(new Rect(Screen.width - 100, Screen.height - 70, 30, 30), player.unequippedWeapon.icon.texture);
-            GUI.DrawTexture(new Rect(Screen.width - 160, Screen.height - 60, 50, 50), player.leftWeapon.icon.texture);
-            GUI.DrawTexture(new Rect(Screen.width - 60, Screen.height - 60, 50, 50), player.rightWeapon.icon.texture);
+//            GUI.DrawTexture(new Rect(Screen.width - 100, Screen.height - 70, 30, 30), player.unequippedWeapon.icon.texture);
+          //  GUI.DrawTexture(new Rect(Screen.width - 160, Screen.height - 60, 50, 50), player.leftWeapon.icon.texture);
+           // GUI.DrawTexture(new Rect(Screen.width - 60, Screen.height - 60, 50, 50), player.rightWeapon.icon.texture);
         }
     }
 

@@ -30,7 +30,7 @@ public class DataGod
     public const int PLAYER_MAX_HEALTH = 100000;
     public const int PLAYER_RESPAWN_TIME = 7;
     //Player variables
-    public static string playerName;
+	public static string playerName = "Default Name";
 
     private static string[] defaultNames = new string[] { "Greg", "Nic", "Wes", "Brad", "Michael",
         "Andrew", "Bob", "Catherine", "Delilah", "Elizabeth", "Fred", "George", "Hubert", "Ingred", "Julia",
