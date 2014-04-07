@@ -30,16 +30,13 @@ public class DataGod
     public const int PLAYER_MAX_HEALTH = 100000;
     public const int PLAYER_RESPAWN_TIME = 7;
     //Player variables
-<<<<<<< HEAD
+
 	public static string playerName = "Default Name";
-=======
-    public static string playerName = "Default name";
->>>>>>> 5f29addaac430509bc032c34c84c05f0fbcb4273
 
     private static string[] defaultNames = new string[] { "Greg", "Nic", "Wes", "Brad", "Michael",
         "Andrew", "Bob", "Catherine", "Delilah", "Elizabeth", "Fred", "George", "Hubert", "Ingred", "Julia",
     "Kyle", "Liam", "Maria", "Nancy", "Odin", "Patrick", "Quinn", "Riley", "Samantha", "Thomas", "Umer", "Victoria",
-    "Witchita", "Xavior", "Yawn", "Zachary", "Baby Jesus"};
+    "Witchita", "Xavior", "Yawn", "Zachary", "Baby Jesus", "Helix"};
     public static string GetRandomName()
     {
         return defaultNames[Random.Range(0, defaultNames.Length)];
@@ -47,10 +44,10 @@ public class DataGod
 
     //Chat filter
     #region Not for the faint of heart
-    public static string[] wordsWeDontLike = new string[] { "tank", "t@nk", "artillery" };
+    public static string[] wordsWeDontLike = new string[] { "tank", "t@nk", "artillery", "op" };
     #endregion
     private static string[] filterAlternateMessages = new string[] { "I like bunny rabbits", "This winter is too long",
-    "I'm such a noob", "Look it's a spider", "Mmm, that tasted purple"};
+    "I'm such a noob", "Look it's a spider", "Mmm, that tasted purple", "WTF did I just say"};
     public static string GetRandomMessage()
     {
         return filterAlternateMessages[Random.Range(0, filterAlternateMessages.Length)];
