@@ -47,29 +47,35 @@ public class DataGod
     public static string[] wordsWeDontLike = new string[] { "tank", "t@nk", "artillery", "op" };
     #endregion
     private static string[] filterAlternateMessages = new string[] { "I like bunny rabbits", "This winter is too long",
-    "I'm such a noob", "Look it's a spider", "Mmm, that tasted purple", "WTF did I just say"};
+    "I'm such a noob", "Look it's a spider", "Mmm, that tasted purple", "What did I just say"};
     public static string GetRandomMessage()
     {
         return filterAlternateMessages[Random.Range(0, filterAlternateMessages.Length)];
     }
 
-    public static string[] treeToolTips = new string[]
+    public static string[] treeToolTips {
+		get { return new string[]
     {
         "Element damage and duration\n+4% damage per point\n+4% duration per point",
-        "Weapon Effect",
-        "Weapon Effect",
+		"Special Effectiveness % increase\n+5% effectiveness per point",
+		"Power Attack Cooldown\n+1% cooldown",
         "Leave this blank, fill in the one below",
-        "Weapon Effect",
-        "Weapon Effect",
-        "Weapon Effect",
-        "Weapon Effect",
-        "Weapon Effect",
-        "Weapon Effect"
-    };
-    public static string[] treeToolTipsID3 = new string[]
+		"Normal Attack Damage\n+2% damage per point",
+		"Power Attack Activation Speed\n+1% activation speed per point",
+		"Crit/Combo Damage Bonus\n+1% damage per point",
+		"Attack Speed Increase\n+1% attack speed per point",
+		"Special Pro Chance Per Combo\n+10% chance per point",
+		"Power Attack Damage\n+3% damage per point"
+			};
+		}
+	}
+
+    public static string[] treeToolTipsID3 { get{ return new string[]
     {
-        "Melee tree",
-        "Ranged tree",
-        "Magic tree"
+        "Critical Window Range/Width\n+0.02 seconds per point",
+        "Chance to not Consume Combo\n+5%",
+        "Combo Timer Length\n+0.5 seconds per point"
     };
+		}
+	}
 }
