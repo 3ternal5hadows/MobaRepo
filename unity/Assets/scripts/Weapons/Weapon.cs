@@ -45,12 +45,19 @@ public class Weapon : MonoBehaviour
             networkView.RPC("RPCEquipped", RPCMode.All, equipped);
         }
     }
-    protected virtual void WeaponUpdate() { }
+    protected virtual void WeaponUpdate()
+    {
+        normalCooldown.Update();
+        powerCooldown.Update();
+    }
 
     public virtual void AttackDown()
     {
-        networkView.RPC("ServerAttack", RPCMode.Server);
-        normalCooldown.GoOnCooldown();
+        if (normalCooldown.IsOffCooldown)
+        {
+            networkView.RPC("ServerAttack", RPCMode.Server);
+            networkView.RPC("RPCNormalCooldown", RPCMode.All);
+        }
     }
 
     public virtual void AttackUp()
@@ -64,6 +71,18 @@ public class Weapon : MonoBehaviour
     }
 
     public virtual void PowerAttack()
+    {
+        networkView.RPC("RPCPowerCooldown", RPCMode.All);
+    }
+
+    [RPC]
+    public void RPCNormalCooldown()
+    {
+        normalCooldown.GoOnCooldown();
+    }
+
+    [RPC]
+    public void RPCPowerCooldown()
     {
         powerCooldown.GoOnCooldown();
     }

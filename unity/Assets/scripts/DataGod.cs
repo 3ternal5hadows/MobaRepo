@@ -31,7 +31,7 @@ public class DataGod
     public const int PLAYER_RESPAWN_TIME = 7;
     //Player variables
 
-	public static string playerName = "Default Name";
+    public static string playerName = "Default Name";
 
     private static string[] defaultNames = new string[] { "Greg", "Nic", "Wes", "Brad", "Michael",
         "Andrew", "Bob", "Catherine", "Delilah", "Elizabeth", "Fred", "George", "Hubert", "Ingred", "Julia",
@@ -53,8 +53,11 @@ public class DataGod
         return filterAlternateMessages[Random.Range(0, filterAlternateMessages.Length)];
     }
 
-    public static string[] treeToolTips {
-		get { return new string[]
+    public static string[] treeToolTips
+    {
+        get
+        {
+            return new string[]
     {
         "Element damage and duration\n+4% damage per point\n+4% duration per point",
 		"Special Effectiveness % increase\n+5% effectiveness per point",
@@ -67,15 +70,19 @@ public class DataGod
 		"Special Pro Chance Per Combo\n+10% chance per point",
 		"Power Attack Damage\n+3% damage per point"
 			};
-		}
-	}
+        }
+    }
 
-    public static string[] treeToolTipsID3 { get{ return new string[]
+    public static string[] treeToolTipsID3
+    {
+        get
+        {
+            return new string[]
     {
         "Critical Window Range/Width\n+0.02 seconds per point",
         "Chance to not Consume Combo\n+5%",
         "Combo Timer Length\n+0.5 seconds per point"
     };
-		}
-	}
+        }
+    }
 }

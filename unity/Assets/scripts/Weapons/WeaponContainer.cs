@@ -21,7 +21,7 @@ public class WeaponContainer : MonoBehaviour {
         allWeapons = new List<GameObject>();
         allWeapons.Add(sword);
         allWeapons.Add(projectileLauncher);
-		allWeapons.Add (hammer);
+		//allWeapons.Add (hammer);
 
         if (weaponNum >= allWeapons.Count)
         {

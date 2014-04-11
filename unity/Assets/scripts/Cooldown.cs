@@ -38,11 +38,15 @@ public class Cooldown
     }
 
     /// <summary>
-    /// Gets the progress of the cooldown, returns 0 - 1
+    /// Gets the progress of the cooldown, returns 0 - 1, 0 is just used, 1 is available
     /// </summary>
     /// <returns>returns 0 - 1</returns>
     public float GetCooldownPercent()
     {
+        if (IsOffCooldown)
+        {
+            return 1;
+        }
         return cooldownTimer.GetPercentComplete();
     }
 }
