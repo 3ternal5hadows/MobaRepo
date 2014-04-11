@@ -61,7 +61,7 @@ public class HUD : MonoBehaviour
         deathsIconRect = new Rect(15, 130, 40, 40);
         killCountRect = new Rect(65, 85, 1, 1);
         deathCountRect = new Rect(65, 130, 1, 1);
-		miniMapRect = new Rect(Screen.width - 205, 5, 200, 200);
+		miniMapRect = new Rect(Screen.width - 283, 0, 283, 152);
 
         teamKillsStyle = new GUIStyle();
         teamKillsStyle.font = font;
