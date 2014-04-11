@@ -146,7 +146,7 @@ public class Node : MonoBehaviour
             string tooltip;
             if (ID == 3)
             {
-                int weaponType = 0;//Need to implement this later
+                int weaponType = WeaponData.weaponType[WeaponData.weapons[WeaponData.currentTree]];
                 tooltip = DataGod.treeToolTipsID3[weaponType];
             }
             else

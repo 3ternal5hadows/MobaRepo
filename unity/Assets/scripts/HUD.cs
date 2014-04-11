@@ -14,8 +14,8 @@ public class HUD : MonoBehaviour
     public bool showDeathInfo;
     public Sprite killsIcon;
     public Sprite deathsIcon;
-	public Sprite miniMap;
-	public Sprite playerSpot;
+    public Sprite miniMap;
+    public Sprite playerSpot;
 
     public Font font;
     private GUIStyle nameStyle;
@@ -27,8 +27,8 @@ public class HUD : MonoBehaviour
     private Rect deathsIconRect;
     private Rect killCountRect;
     private Rect deathCountRect;
-	private Rect miniMapRect;
-	private Rect playerSpotRect;
+    private Rect miniMapRect;
+    private Rect playerSpotRect;
     private GUIStyle teamKillsStyle;
 
     private ScoreKeeper scoreKeeper;
@@ -61,7 +61,7 @@ public class HUD : MonoBehaviour
         deathsIconRect = new Rect(15, 130, 40, 40);
         killCountRect = new Rect(65, 85, 1, 1);
         deathCountRect = new Rect(65, 130, 1, 1);
-		miniMapRect = new Rect(Screen.width - 283, 0, 283, 152);
+        miniMapRect = new Rect(Screen.width - 205, 5, 200, 200);
 
         teamKillsStyle = new GUIStyle();
         teamKillsStyle.font = font;
@@ -91,7 +91,7 @@ public class HUD : MonoBehaviour
             GUI.DrawTexture(killsIconRect, killsIcon.texture);
             GUI.DrawTexture(deathsIconRect, deathsIcon.texture);
 
-			DrawMiniMap();
+            DrawMiniMap();
 
             string str = player.kills + "";
             Vector2 size = killsAndDeathsStyle.CalcSize(new GUIContent(str));
@@ -155,9 +155,29 @@ public class HUD : MonoBehaviour
                 DrawWithGlow(new Rect(Screen.width / 2 - totalSize.x / 2 + skullSize.x, Screen.height / 2 - totalSize.y / 2 + 10,
                     skullSize.x, skullSize.y), killedByString, killedByStyle, Color.black, 5);
             }
-//            GUI.DrawTexture(new Rect(Screen.width - 100, Screen.height - 70, 30, 30), player.unequippedWeapon.icon.texture);
-          //  GUI.DrawTexture(new Rect(Screen.width - 160, Screen.height - 60, 50, 50), player.leftWeapon.icon.texture);
-           // GUI.DrawTexture(new Rect(Screen.width - 60, Screen.height - 60, 50, 50), player.rightWeapon.icon.texture);
+            //            GUI.DrawTexture(new Rect(Screen.width - 100, Screen.height - 70, 30, 30), player.unequippedWeapon.icon.texture);
+            Rect leftRect = new Rect(Screen.width - 160, Screen.height - 60, 50, 50);
+            Rect rightRect = new Rect(Screen.width - 60, Screen.height - 60, 50, 50);
+            Rect leftRectSmall = new Rect(Screen.width - 160 + 7, Screen.height - 60 + 7, 36, 36);
+            Rect rightRectSmall = new Rect(Screen.width - 60 + 7, Screen.height - 60 + 7, 36, 36);
+            GUI.DrawTexture(leftRect, player.leftWeapon.icon.texture);
+            GUI.DrawTexture(rightRect, player.rightWeapon.icon.texture);
+            if (player.leftWeapon.normalCooldown.IsOnCooldown)
+            {
+                GUI.DrawTexture(leftRectSmall, normalCooldownFrames[(int)(player.leftWeapon.normalCooldown.GetCooldownPercent() * normalCooldownFrames.Count)].texture);
+            }
+            if (player.rightWeapon.normalCooldown.IsOnCooldown)
+            {
+                GUI.DrawTexture(rightRectSmall, normalCooldownFrames[(int)(player.rightWeapon.normalCooldown.GetCooldownPercent() * normalCooldownFrames.Count)].texture);
+            }
+            if (player.leftWeapon.powerCooldown.IsOnCooldown)
+            {
+                GUI.DrawTexture(leftRect, powerCooldownFrames[(int)(player.leftWeapon.powerCooldown.GetCooldownPercent() * powerCooldownFrames.Count)].texture);
+            }
+            if (player.rightWeapon.powerCooldown.IsOnCooldown)
+            {
+                GUI.DrawTexture(rightRect, powerCooldownFrames[(int)(player.rightWeapon.powerCooldown.GetCooldownPercent() * powerCooldownFrames.Count)].texture);
+            }
         }
     }
 
@@ -196,11 +216,11 @@ public class HUD : MonoBehaviour
         GUI.Label(rect, str, guiStyle);
     }
 
-	private void DrawMiniMap()
-	{
-		GUI.DrawTexture(miniMapRect, miniMap.texture);
-		// map to minimap scale = 80
-		playerSpotRect = new Rect( player.transform.position.x + (Screen.width - (miniMap.texture.width / 2)) , - player.transform.position.z + (miniMap.texture.height / 2), 20, 20);
-		GUI.DrawTexture(playerSpotRect, playerSpot.texture);
-	}
+    private void DrawMiniMap()
+    {
+        GUI.DrawTexture(miniMapRect, miniMap.texture);
+        // map to minimap scale = 80
+        playerSpotRect = new Rect(player.transform.position.x + (Screen.width - (miniMap.texture.width / 2)), -player.transform.position.z + (miniMap.texture.height / 2), 20, 20);
+        GUI.DrawTexture(playerSpotRect, playerSpot.texture);
+    }
 }
