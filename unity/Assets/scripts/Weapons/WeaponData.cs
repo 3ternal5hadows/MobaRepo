@@ -10,6 +10,11 @@ public class WeaponData {
                                                      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
     public static int[] weapons = new int[3] { 0, 0, 0 };
 
+    public static int MELEE = 0;
+    public static int SPELL = 1;
+    public static int RANGED = 2;
+    public static int[] weaponType = new int[] { 0, 1, 0 };
+
     public const int LEFTHANDWEAPON = 0;
     public const int RIGHTHANDWEAPON = 1;
     public const int UNEQUIPPEDWEAPON = 2;

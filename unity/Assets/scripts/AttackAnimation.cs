@@ -56,6 +56,7 @@ public class AttackAnimation : MonoBehaviour
 
     public void Attack(PlayerManager player)
     {
+		Debug.Log ("Attack Called");
         if (animation.isPlaying)
         {
             animationLength = animation[currentAnimation].length;

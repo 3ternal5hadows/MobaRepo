@@ -36,7 +36,10 @@ public class MeleeWeapon : Weapon
 
     public override void AttackDown()
     {
+        if (normalCooldown.IsOffCooldown)
+        {
+            gameObject.GetComponent<AttackAnimation>().Attack(player);
+        }
         base.AttackDown();
-        gameObject.GetComponent<AttackAnimation>().Attack(player);
     }
 }
