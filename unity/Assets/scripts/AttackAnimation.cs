@@ -6,6 +6,7 @@ public class AttackAnimation : MonoBehaviour
 {
     public float WindowSize;
     public List<string> animationNames;
+    public string powerAttack;
 
     float timeElapsedSinceLastAttack = 0;
     float timeElapsed = 0;
@@ -13,6 +14,7 @@ public class AttackAnimation : MonoBehaviour
     float animationLength;
     string nextAnimation;
     string currentAnimation;
+    bool isPowerAttack = false;
 
     // Use this for initialization
     void Start()
@@ -51,12 +53,23 @@ public class AttackAnimation : MonoBehaviour
 
     private string Anim(PlayerManager player)
     {
+        if (isPowerAttack)
+        {
+            isPowerAttack = false;
+            return powerAttack;
+        }
         return animationNames[(player.ComboCount % animation.GetClipCount())];
+    }
+
+    public void PowerAttack(PlayerManager player)
+    {
+        isPowerAttack = true;
+        Attack(player);
     }
 
     public void Attack(PlayerManager player)
     {
-		Debug.Log ("Attack Called");
+        Debug.Log("Attack Called");
         if (animation.isPlaying)
         {
             animationLength = animation[currentAnimation].length;
