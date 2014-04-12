@@ -64,7 +64,7 @@ public class NetworkManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        MasterServer.ipAddress = "10.111.74.143:23466";
+        //MasterServer.ipAddress = "10.111.74.143:23466";
         playerInitialized = false;
         connectionsSet = false;
         SpawnPoint = GameObject.FindGameObjectsWithTag("SpawnPoint");
