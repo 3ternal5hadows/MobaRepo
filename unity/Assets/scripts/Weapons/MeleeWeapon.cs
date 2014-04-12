@@ -42,4 +42,13 @@ public class MeleeWeapon : Weapon
         }
         base.AttackDown();
     }
+
+    public override void PowerAttack()
+    {
+        if (powerCooldown.IsOffCooldown)
+        {
+            gameObject.GetComponent<AttackAnimation>().PowerAttack(player);
+        }
+        base.PowerAttack();
+    }
 }
