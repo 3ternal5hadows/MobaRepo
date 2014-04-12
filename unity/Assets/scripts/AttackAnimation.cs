@@ -58,7 +58,7 @@ public class AttackAnimation : MonoBehaviour
             isPowerAttack = false;
             return powerAttack;
         }
-        return animationNames[(player.ComboCount % animation.GetClipCount())];
+        return animationNames[(player.ComboCount % animationNames.Count)];
     }
 
     public void PowerAttack(PlayerManager player)
