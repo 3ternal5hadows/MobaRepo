@@ -61,7 +61,7 @@ public class HUD : MonoBehaviour
         deathsIconRect = new Rect(15, 130, 40, 40);
         killCountRect = new Rect(65, 85, 1, 1);
         deathCountRect = new Rect(65, 130, 1, 1);
-        miniMapRect = new Rect(Screen.width - 205, 5, 200, 200);
+        miniMapRect = new Rect(Screen.width - 283, 0, 283, 152);
 
         teamKillsStyle = new GUIStyle();
         teamKillsStyle.font = font;
@@ -220,7 +220,12 @@ public class HUD : MonoBehaviour
     {
         GUI.DrawTexture(miniMapRect, miniMap.texture);
         // map to minimap scale = 80
-        playerSpotRect = new Rect(player.transform.position.x + (Screen.width - (miniMap.texture.width / 2)), -player.transform.position.z + (miniMap.texture.height / 2), 20, 20);
+		float multiX = 1.7f;
+		float multiY = 1.7f;
+		float offSetX = 7f;
+		float offSetY = 37f;
+		playerSpotRect = new Rect((player.transform.position.x * multiX) + (Screen.width - (miniMap.texture.width / 2)) - offSetX, ((-player.transform.position.z * multiY) + (miniMap.texture.height / 2)) - offSetY, 10, 10);
+
         GUI.DrawTexture(playerSpotRect, playerSpot.texture);
     }
 }

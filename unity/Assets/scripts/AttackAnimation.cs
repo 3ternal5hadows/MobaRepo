@@ -58,8 +58,7 @@ public class AttackAnimation : MonoBehaviour
             isPowerAttack = false;
             return powerAttack;
         }
-		Debug.Log("Animation number: "+(player.ComboCount % animation.GetClipCount()));
-		return animationNames[(player.ComboCount % animationNames.Count)];
+        return animationNames[(player.ComboCount % animationNames.Count)];
     }
 
     public void PowerAttack(PlayerManager player)
