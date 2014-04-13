@@ -13,25 +13,28 @@ public class ProjectileDamageObject : DamageObject
 
     void OnTriggerEnter(Collider hit)
     {
+        if (hit.gameObject.tag == "bounds")
+        {
+            GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
+            networkView.RPC("DestroyProjectile", RPCMode.Server);
+        }
+        else if (hit.gameObject.tag == "Player")
+        {
+            PlayerManager sourceObject = GameObject.Find("NetworkManager").GetComponent<NetworkManager>().allPlayers[source];
+            if (sourceObject.gameObject != hit.gameObject)
+            {
+                GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
+            }
+        }
         if (DataGod.isServer)
         {
             Hit(hit);
         }
     }
 
-    protected override void Hit(Collider hit)
-    {
-        if (hit.gameObject.tag == "bounds")
-        {
-            networkView.RPC("DestroyProjectile", RPCMode.Server);
-        }
-        base.Hit(hit);
-    }
-
     [RPC]
     public void DestroyProjectile()
     {
         Network.Destroy(networkView.viewID);
-        GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
     }
 }
