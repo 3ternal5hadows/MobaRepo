@@ -171,29 +171,29 @@ public class PlayerManager : MonoBehaviour
         if (networkView.isMine)
         {
             SetAllyMarker();
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0)||Input.GetButtonDown("LeftBumper"))
             {
                 leftWeapon.AttackDown();
             }
-            if (Input.GetMouseButtonDown(1))
-            {
-                rightWeapon.AttackDown();
+			if (Input.GetMouseButtonDown(1)||Input.GetButtonDown("RightBumper"))
+			{
+				rightWeapon.AttackDown();
             }
-            if (Input.GetMouseButtonUp(0))
-            {
-                leftWeapon.AttackUp();
+			if (Input.GetMouseButtonUp(0)||Input.GetButtonUp("LeftBumper"))
+			{
+				leftWeapon.AttackUp();
             }
-            if (Input.GetMouseButtonUp(1))
-            {
-                rightWeapon.AttackUp();
+			if (Input.GetMouseButtonUp(1)||Input.GetButtonUp("LeftBumper"))
+			{
+				rightWeapon.AttackUp();
             }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                leftWeapon.PowerAttack();
+			if (Input.GetKeyDown(KeyCode.Q)||Input.GetAxis("LeftTrigger")>0.5f)
+			{
+				leftWeapon.PowerAttack();
             }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                rightWeapon.PowerAttack();
+			if (Input.GetKeyDown(KeyCode.E)||Input.GetAxis("RightTrigger")>0.5f)
+			{
+				rightWeapon.PowerAttack();
             }
             //if (Input.GetKeyDown(KeyCode.Alpha1))
             //{

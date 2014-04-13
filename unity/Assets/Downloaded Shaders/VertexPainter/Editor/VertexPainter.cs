@@ -290,7 +290,7 @@ public class VertexPainter : EditorWindow {
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.EndVertical();
 		
-		radius = Mathf.Clamp(EditorGUILayout.FloatField("Radius", radius), 0.001f, 100f);
+		radius = Mathf.Clamp(EditorGUILayout.FloatField("Radius", radius), 0.01f, 100f);
 		blendFactor = Mathf.Clamp(EditorGUILayout.FloatField("Blend", blendFactor), 0.01f, 1f);
 		
 		GUIContent showVertexLbl = new GUIContent ("Show vertex colors", "Shortcut CTRL-Q");
