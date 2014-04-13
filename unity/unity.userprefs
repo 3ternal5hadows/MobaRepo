@@ -1,9 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Behavious\AmbientLighting.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\AttackAnimation.cs">
     <Files>
-      <File FileName="Assets\scripts\Behavious\AmbientLighting.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\NetworkManager.cs" Line="151" Column="45" />
+      <File FileName="Assets\scripts\PlayerMotor.cs" Line="154" Column="5" />
+      <File FileName="Assets\scripts\AttackAnimation.cs" Line="55" Column="6" />
+      <File FileName="Assets\Downloaded Shaders\VertexPainter\Shaders\VertexBlend.shader" Line="107" Column="2" />
+      <File FileName="Assets\scripts\ScriptsFromNic\PlayerManager.cs" Line="406" Column="2" />
+      <File FileName="Assets\scripts\Behavious\FollowMousePos.cs" Line="15" Column="31" />
+      <File FileName="Assets\scripts\Behavious\CameraFollowMouse.cs" Line="9" Column="41" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

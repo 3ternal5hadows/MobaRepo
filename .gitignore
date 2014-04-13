@@ -6,3 +6,5 @@
 *.csproj
 *.unityproj
 *.sln
+unity/Assets/XboxControllerTest.cs
+unity/Assets/XboxControllerTest.cs.meta
