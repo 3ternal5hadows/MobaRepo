@@ -6,6 +6,7 @@ public class WeaponContainer : MonoBehaviour {
     public GameObject sword;
     public GameObject projectileLauncher;
 	public GameObject hammer;
+	public GameObject dagger;
     private List<GameObject> allWeapons;
     public string name;
 
@@ -22,6 +23,7 @@ public class WeaponContainer : MonoBehaviour {
         allWeapons.Add(sword);
         allWeapons.Add(projectileLauncher);
 		allWeapons.Add (hammer);
+		allWeapons.Add (dagger);
 
         if (weaponNum >= allWeapons.Count)
         {
