@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ProjectileDamageObject : DamageObject {
+public class ProjectileDamageObject : DamageObject
+{
     public GameObject deathEffect;
 
     protected override void PlayerHit(Collider hit, PlayerManager sourceObject)
@@ -12,6 +13,19 @@ public class ProjectileDamageObject : DamageObject {
 
     void OnTriggerEnter(Collider hit)
     {
+        if (hit.gameObject.tag == "bounds")
+        {
+            GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
+            networkView.RPC("DestroyProjectile", RPCMode.Server);
+        }
+        else if (hit.gameObject.tag == "Player")
+        {
+            PlayerManager sourceObject = GameObject.Find("NetworkManager").GetComponent<NetworkManager>().allPlayers[source];
+            if (sourceObject.gameObject != hit.gameObject)
+            {
+                GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
+            }
+        }
         if (DataGod.isServer)
         {
             Hit(hit);
@@ -21,14 +35,6 @@ public class ProjectileDamageObject : DamageObject {
     [RPC]
     public void DestroyProjectile()
     {
-        if (DataGod.isServer)
-        {
-            //GameObject death = Network.Instantiate(deathEffect, this.transform.position, Quaternion.identity, 0) as GameObject;
-            //Network.Destroy(gameObject);
-            //Network.Destroy(networkView.viewID);
-        }
         Network.Destroy(networkView.viewID);
-        GameObject death = Instantiate(deathEffect, this.transform.position, Quaternion.identity) as GameObject;
-        //Destroy(gameObject);
     }
 }

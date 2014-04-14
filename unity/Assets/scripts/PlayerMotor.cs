@@ -3,17 +3,17 @@ using System.Collections;
 
 public class PlayerMotor : MonoBehaviour
 {
-    Vector3 difference;
-    Vector3 accelerationGravityRight = Vector3.zero;
-    Vector3 accelerationGravityLeft = Vector3.zero;
-    Vector3 accelerationSpringRight = Vector3.zero;
-    Vector3 accelerationSpringLeft = Vector3.zero;
-    Vector3 accelerationMovement = Vector3.zero;
+
 
     //Dodge Vars
     Cooldown dodgeCooldown;
     float dodgeSpeed = 40000;
 
+	#region PysicsVars
+	Vector3 difference;   
+	Vector3 accelerationGravity = Vector3.zero;
+	Vector3 accelerationSpring = Vector3.zero;	
+	Vector3 accelerationMovement = Vector3.zero;
     Vector3 displacement;
     Vector3 netAcceleration;
     Vector3 velocity;
@@ -21,9 +21,15 @@ public class PlayerMotor : MonoBehaviour
     float maxSpeed = 6000f;
     float frictionForce = 150;
     float gravity = 0;
+	float mass = 10f;
+	float gravityDeadZone = 10;
+	#endregion
 
-    float mass = 10f;
-    float gravityDeadZone = 10;
+
+	float controllerDeadZone = 0.1f;
+
+
+  
 
 
     void Start()
@@ -72,7 +78,7 @@ public class PlayerMotor : MonoBehaviour
     }
     void ResolvePhysics()
     {
-        netAcceleration = accelerationSpringLeft + accelerationSpringRight + accelerationGravityLeft + accelerationGravityRight + accelerationMovement;
+        netAcceleration = accelerationSpring + accelerationGravity  + accelerationMovement;
 
         velocity = netAcceleration * Time.deltaTime;
         if (velocity.magnitude > maxSpeed)
@@ -85,27 +91,30 @@ public class PlayerMotor : MonoBehaviour
         transform.rigidbody.AddForce(velocity * Time.deltaTime + 0.5f * netAcceleration * Time.deltaTime * Time.deltaTime, ForceMode.VelocityChange);
 
         //transform.Translate(netAcceleration);
-        accelerationGravityLeft = Vector3.zero;
-        accelerationSpringLeft = Vector3.zero;
-        accelerationGravityRight = Vector3.zero;
-        accelerationSpringRight = Vector3.zero;
+        accelerationGravity = Vector3.zero;
+        accelerationSpring = Vector3.zero;
+      
+      
         accelerationMovement = Vector3.zero;
     }
     void DetectInput()
     {
-        if (Input.GetKey(KeyCode.W))//forwards
+
+
+
+		#region Keyboard Input
+		if (Input.GetKey(KeyCode.W))//forwards
         {
             accelerationMovement.z = 1f;
         }
         else if (Input.GetKey(KeyCode.S))//down
         {
-            accelerationMovement.z += -1f;
+            accelerationMovement.z = -1f;
         }
         else
         {
             accelerationMovement.z = 0;
         }
-
         if (Input.GetKey(KeyCode.A))//left
         {
             accelerationMovement.x = -1f;
@@ -118,53 +127,69 @@ public class PlayerMotor : MonoBehaviour
         {
             accelerationMovement.x = 0;
         }
-        dodgeCooldown.Update();
-        if (Input.GetKey(KeyCode.Space) && dodgeCooldown.IsOffCooldown)
-        {
-            dodgeCooldown.GoOnCooldown();
-            accelerationMovement = accelerationMovement.normalized * (speed + dodgeSpeed);
-        }
-        else accelerationMovement = accelerationMovement.normalized * speed;
+        
+		#endregion
+		#region Contoller Input
+
+		Vector2 leftStick = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
+		Vector2 rightStick = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
+
+
+
+		if(Mathf.Abs(leftStick.x) > controllerDeadZone)
+		{	
+			accelerationMovement.x = leftStick.x;
+		}else 
+		{
+			accelerationMovement.x = 0;
+		}
+		if(Mathf.Abs(leftStick.y) > controllerDeadZone)
+		{
+			accelerationMovement.z = leftStick.y;
+		}else 
+		{
+			accelerationMovement.z = 0;
+		}
+
+		//Debug.Log(leftStick+" "+accelerationMovement);
+
+
+
+		dodgeCooldown.Update();
+		if ((Input.GetKey(KeyCode.Space)||Input.GetButton("Dodge")) && dodgeCooldown.IsOffCooldown)
+		{
+			dodgeCooldown.GoOnCooldown();
+			accelerationMovement = accelerationMovement.normalized * (speed + dodgeSpeed);
+		}
+		else accelerationMovement = accelerationMovement.normalized * speed;
+
+		
+
+
+
+		#endregion
+
+
     }
 
-    public void ApplyGravityLeft(Vector3 _position, float _mass)
+    public void ApplyGravity(Vector3 _position, float _mass)
     {
         //radius
         difference = _position - transform.position;
         if (difference.magnitude > gravityDeadZone)
         {
             float forceOfGravity = gravity * _mass * mass / (difference.magnitude * difference.magnitude);
-            accelerationGravityLeft += difference.normalized * forceOfGravity;
+            accelerationGravity += difference.normalized * forceOfGravity;
         }
+    }  
 
-    }
-    public void ApplyGravityRight(Vector3 _position, float _mass)
-    {
-        //radius
-        difference = _position - transform.position;
-        if (difference.magnitude > gravityDeadZone)
-        {
-            float forceOfGravity = gravity * _mass * mass / (difference.magnitude * difference.magnitude);
-            accelerationGravityRight += difference.normalized * forceOfGravity;
-        }
-
-    }
-
-    public void ApplySpringForceLeft(Vector3 _position, float _mass, float DeadZone, float springStrength)
+    
+    public void ApplySpringForce(Vector3 _position, float _mass, float DeadZone, float springStrength)
     {
         difference = transform.position - _position;
         if (difference.magnitude > DeadZone)
         {
-            accelerationSpringLeft += -springStrength * (difference.magnitude - DeadZone) * difference.normalized - (springStrength * 0.5f * difference.normalized);
-        }
-
-    }
-    public void ApplySpringForceRight(Vector3 _position, float _mass, float DeadZone, float springStrength)
-    {
-        difference = transform.position - _position;
-        if (difference.magnitude > DeadZone)
-        {
-            accelerationSpringRight += -springStrength * (difference.magnitude - DeadZone) * difference.normalized - (springStrength * 0.5f * difference.normalized);
+            accelerationSpring += -springStrength * (difference.magnitude - DeadZone) * difference.normalized - (springStrength * 0.5f * difference.normalized);
         }
 
     }
