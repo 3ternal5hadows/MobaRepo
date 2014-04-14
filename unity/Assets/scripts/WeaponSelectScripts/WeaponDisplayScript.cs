@@ -21,7 +21,7 @@ public class WeaponDisplayScript : MonoBehaviour {
 		//WeaponRotating
 		Vector2 displayPos = Camera.main.WorldToScreenPoint(transform.position);
 
-		if (GUI.Button(new Rect(displayPos.x - 40, Screen.height+30 - displayPos.y, 25, 25), "<<"))
+		if (GUI.Button(new Rect(displayPos.x - 140, Screen.height - 60 - displayPos.y, 25, 25), "<<"))
 		{
 			if(elapsedTime>cooldown)
 			{
@@ -29,7 +29,7 @@ public class WeaponDisplayScript : MonoBehaviour {
 				switchTime =0;
 			}
 		}
-		if (GUI.Button(new Rect(displayPos.x + 18,Screen.height+30 - displayPos.y, 25, 25), ">>"))
+		if (GUI.Button(new Rect(displayPos.x + 120,Screen.height - 60 - displayPos.y, 25, 25), ">>"))
 		{
 			if(elapsedTime>cooldown)
 			{
@@ -38,7 +38,7 @@ public class WeaponDisplayScript : MonoBehaviour {
 			}
 		}
 
-		if(GUI.Button (new Rect(displayPos.x+100, Screen.height+30 - displayPos.y, 125, 25),"Setup Talents"))
+		if(GUI.Button (new Rect(displayPos.x+100, Screen.height + 30 - displayPos.y, 125, 25),"Setup Talents"))
 		{
 			WeaponData.currentTree = DisplayNumber;
 			Application.LoadLevel("Skill Tree");
