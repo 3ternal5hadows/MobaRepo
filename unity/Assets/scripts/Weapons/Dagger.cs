@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Hammer : MeleeWeapon {
+public class Dagger : MeleeWeapon {
 	protected override void WeaponStart()
 	{
+
 		normalCooldown = new Cooldown(0.5f);
 		powerCooldown = new Cooldown(5);
 		base.WeaponStart();

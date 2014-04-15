@@ -1,16 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\MeteorSpellScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Weapons\Hammer.cs">
     <Files>
-      <File FileName="Assets\scripts\Weapons\WeaponContainer.cs" Line="43" Column="1" />
-      <File FileName="Assets\scripts\PlayerMotor.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\AttackAnimation.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\ScriptsFromNic\PlayerManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Behavious\FollowMousePos.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Behavious\CameraFollowMouse.cs" Line="1" Column="1" />
-      <File FileName="Assets\MeteorSpellScript.cs" Line="12" Column="3" />
-      <File FileName="Assets\TargetLocation.cs" Line="22" Column="25" />
-      <File FileName="Assets\SpawnOnClick.cs" Line="23" Column="20" />
+      <File FileName="Assets\scripts\Weapons\WeaponContainer.cs" Line="41" Column="2" />
+      <File FileName="Assets\scripts\Weapons\WeaponContainer.cs" Line="41" Column="2" />
+      <File FileName="Assets\scripts\HUD.cs" Line="202" Column="55" />
+      <File FileName="Assets\scripts\WeaponSelectScripts\WeaponDisplayScript.cs" Line="157" Column="1" />
+      <File FileName="Assets\scripts\AttackAnimation.cs" Line="100" Column="1" />
+      <File FileName="Assets\scripts\Weapons\Weapon.cs" Line="41" Column="2" />
+      <File FileName="Assets\scripts\Weapons\MeleeWeapon.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Cooldown.cs" Line="17" Column="36" />
+      <File FileName="Assets\scripts\Weapons\Sword.cs" Line="5" Column="1" />
+      <File FileName="Assets\scripts\Weapons\Hammer.cs" Line="13" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
