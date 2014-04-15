@@ -18,7 +18,6 @@ public class PlayerManager : MonoBehaviour
     private float dodgeCoolDown;
     public Weapon leftWeapon;
     public Weapon rightWeapon;
-    public Weapon unequippedWeapon;
     public int teamNumber;
     //Kill/Death
     public int kills;
@@ -77,7 +76,7 @@ public class PlayerManager : MonoBehaviour
                     rightWeapon = containers[i].InstantiateWeapon(WeaponData.weapons[WeaponData.RIGHTHANDWEAPON], WeaponData.RIGHTHANDWEAPON);
                 }
             }
-            networkView.RPC("SetWeapons", RPCMode.AllBuffered, leftWeapon.networkView.viewID, rightWeapon.networkView.viewID, unequippedWeapon.networkView.viewID);
+            networkView.RPC("SetWeapons", RPCMode.AllBuffered, leftWeapon.networkView.viewID, rightWeapon.networkView.viewID);
         }
         if (DataGod.isServer)
         {
@@ -104,14 +103,12 @@ public class PlayerManager : MonoBehaviour
     }
 
     [RPC]
-    public void SetWeapons(NetworkViewID left, NetworkViewID right, NetworkViewID back)
+    public void SetWeapons(NetworkViewID left, NetworkViewID right)
     {
         leftWeapon = NetworkView.Find(left).gameObject.GetComponent<Weapon>();
         rightWeapon = NetworkView.Find(right).gameObject.GetComponent<Weapon>();
-        unequippedWeapon = NetworkView.Find(back).gameObject.GetComponent<Weapon>();
         leftWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
         rightWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
-        unequippedWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
         leftWeapon.player = this;
         rightWeapon.player = this;
     }
@@ -134,19 +131,6 @@ public class PlayerManager : MonoBehaviour
             chat.playerName = name;
             chat.player = this;
         }
-
-        if (leftWeapon != null)
-        {
-            leftWeapon.Equipped = true;
-        }
-        if (rightWeapon != null)
-        {
-            rightWeapon.Equipped = true;
-        }
-        if (unequippedWeapon != null)
-        {
-            unequippedWeapon.Equipped = false;
-        }
     }
 
     // Update is called once per frame
@@ -166,38 +150,30 @@ public class PlayerManager : MonoBehaviour
         if (networkView.isMine)
         {
             SetAllyMarker();
-            if (Input.GetMouseButtonDown(0)||Input.GetButtonDown("LeftBumper"))
+            if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("LeftBumper"))
             {
                 leftWeapon.AttackDown();
             }
-			if (Input.GetMouseButtonDown(1)||Input.GetButtonDown("RightBumper"))
-			{
-				rightWeapon.AttackDown();
+            if (Input.GetMouseButtonDown(1) || Input.GetButtonDown("RightBumper"))
+            {
+                rightWeapon.AttackDown();
             }
-			if (Input.GetMouseButtonUp(0)||Input.GetButtonUp("LeftBumper"))
-			{
-				leftWeapon.AttackUp();
+            if (Input.GetMouseButtonUp(0) || Input.GetButtonUp("LeftBumper"))
+            {
+                leftWeapon.AttackUp();
             }
-			if (Input.GetMouseButtonUp(1)||Input.GetButtonUp("LeftBumper"))
-			{
-				rightWeapon.AttackUp();
+            if (Input.GetMouseButtonUp(1) || Input.GetButtonUp("LeftBumper"))
+            {
+                rightWeapon.AttackUp();
             }
-			if (Input.GetKeyDown(KeyCode.Q)||Input.GetAxis("LeftTrigger")>0.5f)
-			{
-				leftWeapon.PowerAttack();
+            if (Input.GetKeyDown(KeyCode.Q) || Input.GetAxis("LeftTrigger") > 0.5f)
+            {
+                leftWeapon.PowerAttack();
             }
-			if (Input.GetKeyDown(KeyCode.E)||Input.GetAxis("RightTrigger")>0.5f)
-			{
-				rightWeapon.PowerAttack();
+            if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("RightTrigger") > 0.5f)
+            {
+                rightWeapon.PowerAttack();
             }
-            //if (Input.GetKeyDown(KeyCode.Alpha1))
-            //{
-            //    networkView.RPC("SwapWeapons", RPCMode.All, 0);
-            //}
-            //if (Input.GetKeyDown(KeyCode.Alpha2))
-            //{
-            //    networkView.RPC("SwapWeapons", RPCMode.All, 1);
-            //}
         }
 
         healthPentagon.GetComponent<HealthPentagon>().SetPosition(transform.position);
@@ -205,36 +181,6 @@ public class PlayerManager : MonoBehaviour
         {
             healthPentagon.GetComponent<HealthPentagon>().Show(health, maxHealth);
         }
-    }
-    [RPC]
-    public void SwapWeapons(int hand)
-    {
-        if (hand == 0)
-        {
-            Debug.Log("Swap left");
-            SwapWeaponsNotRPC(leftWeapon);
-        }
-        else
-        {
-            Debug.Log("Swap right");
-            SwapWeaponsNotRPC(rightWeapon);
-        }
-    }
-
-    public void SwapWeaponsNotRPC(Weapon handWeapon)
-    {
-        Transform handParent = handWeapon.transform.parent;
-        Transform unequippedParent = unequippedWeapon.transform.parent;
-        handWeapon.transform.parent = unequippedParent;
-        unequippedWeapon.transform.parent = handParent;
-        handWeapon.transform.localPosition = new Vector3(0, 0, 0);
-        unequippedWeapon.transform.localPosition = new Vector3(0, 0, 0);
-        Weapon handTemp = handWeapon;
-        Weapon unequippedTemp = unequippedWeapon;
-        handWeapon = unequippedTemp;
-        unequippedWeapon = handTemp;
-        handWeapon.networkView.RPC("RPCEquipped", RPCMode.All, true);
-        unequippedWeapon.networkView.RPC("RPCEquipped", RPCMode.All, false);
     }
 
     /// <summary>
