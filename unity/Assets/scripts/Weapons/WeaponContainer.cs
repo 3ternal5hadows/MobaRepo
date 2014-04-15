@@ -22,6 +22,7 @@ public class WeaponContainer : MonoBehaviour {
         allWeapons = new List<GameObject>();
         allWeapons.Add(sword);
         allWeapons.Add(projectileLauncher);
+
 		allWeapons.Add (hammer);
 		allWeapons.Add (dagger);
 
@@ -33,7 +34,6 @@ public class WeaponContainer : MonoBehaviour {
         GameObject weapon = (GameObject)Network.Instantiate(allWeapons[weaponNum], transform.position, transform.rotation, 0);
         Weapon weaponScript = weapon.GetComponent<Weapon>();
         weaponScript.ID = ID;
-        weaponScript.Equipped = (ID != WeaponData.UNEQUIPPEDWEAPON);
         weaponScript.networkView.RPC("SetParent", RPCMode.AllBuffered, transform.parent.networkView.viewID);
         return weaponScript;
     }

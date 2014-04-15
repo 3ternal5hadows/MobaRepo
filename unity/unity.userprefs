@@ -1,9 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Weapons\WeaponContainer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Weapons\Hammer.cs">
     <Files>
-      <File FileName="Assets\scripts\Weapons\WeaponContainer.cs" Line="26" Column="27" />
-      <File FileName="Assets\scripts\HUD.cs" Line="201" Column="49" />
+      <File FileName="Assets\scripts\Weapons\WeaponContainer.cs" Line="41" Column="2" />
+      <File FileName="Assets\scripts\Weapons\WeaponContainer.cs" Line="41" Column="2" />
+      <File FileName="Assets\scripts\HUD.cs" Line="202" Column="55" />
+      <File FileName="Assets\scripts\WeaponSelectScripts\WeaponDisplayScript.cs" Line="157" Column="1" />
+      <File FileName="Assets\scripts\AttackAnimation.cs" Line="100" Column="1" />
+      <File FileName="Assets\scripts\Weapons\Weapon.cs" Line="41" Column="2" />
+      <File FileName="Assets\scripts\Weapons\MeleeWeapon.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Cooldown.cs" Line="17" Column="36" />
+      <File FileName="Assets\scripts\Weapons\Sword.cs" Line="5" Column="1" />
+      <File FileName="Assets\scripts\Weapons\Hammer.cs" Line="13" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
