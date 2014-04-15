@@ -76,10 +76,6 @@ public class PlayerManager : MonoBehaviour
                 {
                     rightWeapon = containers[i].InstantiateWeapon(WeaponData.weapons[WeaponData.RIGHTHANDWEAPON], WeaponData.RIGHTHANDWEAPON);
                 }
-                else
-                {
-                    unequippedWeapon = containers[i].InstantiateWeapon(WeaponData.weapons[WeaponData.UNEQUIPPEDWEAPON], WeaponData.UNEQUIPPEDWEAPON);
-                }
             }
             networkView.RPC("SetWeapons", RPCMode.AllBuffered, leftWeapon.networkView.viewID, rightWeapon.networkView.viewID, unequippedWeapon.networkView.viewID);
         }
@@ -118,7 +114,6 @@ public class PlayerManager : MonoBehaviour
         unequippedWeapon.gameObject.GetComponent<DamageObject>().source = playerNumber;
         leftWeapon.player = this;
         rightWeapon.player = this;
-        unequippedWeapon.player = this;
     }
 
     [RPC]

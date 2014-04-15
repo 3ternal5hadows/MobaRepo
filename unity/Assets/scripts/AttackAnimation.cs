@@ -19,7 +19,6 @@ public class AttackAnimation : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-		animation.Stop ();
         nextAnimation = "";
         currentAnimation = "";
     }
