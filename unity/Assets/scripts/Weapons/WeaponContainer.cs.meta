@@ -4,15 +4,14 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - sword: {fileID: 100000, guid: f38412faf96601340993927d0e0e8976, type: 2}
-  - axe: {fileID: 100000, guid: 69888772521cc5e4b84d33e538b08ce5, type: 3}
+  - axe: {fileID: 100000, guid: f38412faf96601340993927d0e0e8976, type: 2}
   - dagger: {fileID: 100000, guid: 687073a6ad330d344b57aaba4913389f, type: 2}
   - hammer: {fileID: 100000, guid: e04a7d3aa3044014390eedc998931c80, type: 2}
   - meteor: {fileID: 100002, guid: 7588031000294344da1fb757c7a608ef, type: 2}
   - projectileLauncher: {fileID: 100000, guid: ea09ff6d505b59d4896e249ece86783f, type: 2}
-  - cone: {instanceID: 0}
-  - line: {instanceID: 0}
-  - pred: {fileID: 100000, guid: 4b10b2435727f1c4cb8b328cf928aa90, type: 2}
-  - shuriken: {instanceID: 0}
+  - line: {fileID: 100000, guid: ea09ff6d505b59d4896e249ece86783f, type: 2}
+  - pred: {fileID: 100000, guid: ea09ff6d505b59d4896e249ece86783f, type: 2}
+  - shuriken: {fileID: 100000, guid: ea09ff6d505b59d4896e249ece86783f, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

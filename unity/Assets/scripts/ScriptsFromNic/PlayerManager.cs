@@ -49,7 +49,7 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject allyMarker;
 
-    void Start()
+    void Awake()
     {
         networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         networkManager.allPlayers.Add(this);
