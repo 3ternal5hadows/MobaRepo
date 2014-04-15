@@ -5,23 +5,6 @@ public class Weapon : MonoBehaviour
 {
     public StatusEffectInfo element;
     public int ID;
-    private bool equipped;
-    public bool Equipped
-    {
-        get { return equipped; }
-        set
-        {
-            equipped = value;
-            if (gameObject.GetComponent<MeshRenderer>() != null)
-            {
-                if (renderer == null)
-                {
-                    renderer = gameObject.GetComponent<MeshRenderer>();
-                }
-                renderer.enabled = equipped;
-            }
-        }
-    }
     private MeshRenderer renderer;
     public Cooldown normalCooldown;
     public Cooldown powerCooldown;
@@ -40,15 +23,14 @@ public class Weapon : MonoBehaviour
 
     protected virtual void WeaponStart()
     {
-        if (networkView.isMine)
-        {
-            networkView.RPC("RPCEquipped", RPCMode.All, equipped);
-        }
     }
     protected virtual void WeaponUpdate()
     {
-        normalCooldown.Update();
-        powerCooldown.Update();
+        if (normalCooldown != null)
+        {
+            normalCooldown.Update();
+            powerCooldown.Update();
+        }
     }
 
     public virtual void AttackDown()
@@ -85,12 +67,6 @@ public class Weapon : MonoBehaviour
     public void RPCPowerCooldown()
     {
         powerCooldown.GoOnCooldown();
-    }
-
-    [RPC]
-    public void RPCEquipped(bool equipped)
-    {
-        Equipped = equipped;
     }
     [RPC]
     public void SetParent(NetworkViewID viewId)

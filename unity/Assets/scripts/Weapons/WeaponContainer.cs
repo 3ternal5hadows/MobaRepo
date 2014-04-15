@@ -4,36 +4,29 @@ using System.Collections.Generic;
 
 public class WeaponContainer : MonoBehaviour {
     public GameObject sword;
-	public GameObject axe;
-	public GameObject dagger;
-	public GameObject hammer;
-	public GameObject meteor;
     public GameObject projectileLauncher;
-	public GameObject line;
-	public GameObject pred;
-	public GameObject shuriken;	
-
+	public GameObject hammer;
+	public GameObject dagger;
     private List<GameObject> allWeapons;
     public string name;
 
 	// Use this for initialization
 	void Start () {
-		allWeapons = new List<GameObject>();
-		allWeapons.Add(sword);
-		allWeapons.Add (dagger);
-		allWeapons.Add (hammer);
-		allWeapons.Add (meteor);
-		allWeapons.Add(projectileLauncher);
-		allWeapons.Add (line);
-		allWeapons.Add (pred);
 	}
 	// Update is called once per frame
 	void Update () {
 	}
 
     public Weapon InstantiateWeapon(int weaponNum, int ID)
-    {      
-		if (weaponNum >= allWeapons.Count)
+    {
+        allWeapons = new List<GameObject>();
+        allWeapons.Add(sword);
+        allWeapons.Add(projectileLauncher);
+
+		allWeapons.Add (hammer);
+		allWeapons.Add (dagger);
+
+        if (weaponNum >= allWeapons.Count)
         {
             weaponNum = allWeapons.Count - 1;
         }
@@ -41,7 +34,6 @@ public class WeaponContainer : MonoBehaviour {
         GameObject weapon = (GameObject)Network.Instantiate(allWeapons[weaponNum], transform.position, transform.rotation, 0);
         Weapon weaponScript = weapon.GetComponent<Weapon>();
         weaponScript.ID = ID;
-
         weaponScript.networkView.RPC("SetParent", RPCMode.AllBuffered, transform.parent.networkView.viewID);
         return weaponScript;
     }
