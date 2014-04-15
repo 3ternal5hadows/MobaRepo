@@ -47,8 +47,10 @@ public class Weapon : MonoBehaviour
     }
     protected virtual void WeaponUpdate()
     {
-        normalCooldown.Update();
-        powerCooldown.Update();
+		if (normalCooldown != null) {
+				normalCooldown.Update ();
+				powerCooldown.Update ();
+		}
     }
 
     public virtual void AttackDown()
