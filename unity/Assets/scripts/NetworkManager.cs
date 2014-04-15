@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class NetworkManager : MonoBehaviour
 {
-    private const string typeName = "NoMoreTanks2";
+    private const string typeName = "NoMoreTanks3";
     private const string gameName = "Room13";
     private HostData[] hostList;
 
