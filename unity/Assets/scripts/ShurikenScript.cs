@@ -26,7 +26,7 @@ public class ShurikenScript : MonoBehaviour {
 	void Update () {
 		elapsedTime += Time.deltaTime;
 		velocity += acceleration * Time.deltaTime;
-		transform.Translate(velocity * Time.deltaTime + (0.5f * acceleration * Time.deltaTime * Time.deltaTime), Space.World);
+		transform.Translate(velocity * Time.deltaTime, Space.World);
 		acceleration = Vector3.zero; 
 		rotationalVelocity += rotationalAcceleration * Time.deltaTime;
 		this.transform.Rotate(new Vector3(0,rotationalVelocity,0));
